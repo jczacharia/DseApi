@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dse.Confluence\Dse.Confluence.csproj" />
+    <ProjectReference Include="..\Dse\Dse.csproj" />
+  </ItemGroup>
+</Project>

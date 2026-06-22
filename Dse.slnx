@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Sources/">
+    <Project Path="src/Dse.Confluence/Dse.Confluence.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="src\Dse.Api\Dse.Api.csproj" />
+    <Project Path="src\Dse\Dse.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests\Dse.Tests.Api\Dse.Tests.Api.csproj" />
+    <Project Path="tests\Dse.Tests.Ui\Dse.Tests.Ui.csproj" />
+    <Project Path="tests\Dse.Tests\Dse.Tests.csproj" />
+  </Folder>
+</Solution>

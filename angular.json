@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -37,13 +38,13 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/Dse.Ui",
       "prefix": "dse",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/main.ts",
+            "browser": "src/Dse.Ui/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -51,9 +52,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/Dse.Ui/styles.css"]
           },
           "configurations": {
             "production": {
@@ -90,6 +89,12 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/Dse.Ui/**/*.ts", "src/Dse.Ui/**/*.html"]
+          }
         }
       }
     }
