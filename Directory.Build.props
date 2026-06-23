@@ -13,7 +13,9 @@
     <AnalysisMode>Recommended</AnalysisMode>
     <NuGetAudit>true</NuGetAudit>
     <NuGetAuditMode>all</NuGetAuditMode>
-    <NoWarn>$(NoWarn);CS1701;CS1702;CS1591;CA1014;CS9057;CA2255</NoWarn>
+    <!-- NU1507: CPM + the committed additive nuget.config (PNC feeds added on top of each
+         machine's default), so >1 source is expected. All sources are trusted PNC mirrors. -->
+    <NoWarn>$(NoWarn);CS1701;CS1702;CS1591;CA1014;CS9057;CA2255;NU1507</NoWarn>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated</InterceptorsNamespaces>
   </PropertyGroup>
 </Project>

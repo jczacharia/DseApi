@@ -80,6 +80,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.cjs"
+          },
           "configurations": {
             "production": {
               "buildTarget": "dse:build:production"
@@ -94,6 +97,13 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": ["src/Dse.Ui/**/*.ts", "src/Dse.Ui/**/*.html"]
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "buildTarget": "dse:build:development"
           }
         }
       }

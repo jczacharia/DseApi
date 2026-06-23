@@ -1,0 +1,9 @@
+/* Angular unit tests (Vitest via @angular/build:unit-test). */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/Dse.Ui/**/*.spec.ts", "src/Dse.Ui/**/*.d.ts"]
+}

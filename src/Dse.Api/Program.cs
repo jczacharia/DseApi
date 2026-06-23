@@ -1,7 +1,13 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
+using Dse.Api;
+using Dse.ServiceDefaults;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// OpenTelemetry, health checks, resilience, service discovery (Aspire ServiceDefaults).
+builder.AddServiceDefaults();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -16,6 +22,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Serve the built Angular SPA from wwwroot (populated on publish). In dev, Dse.AppHost (Aspire)
+// runs `ng serve` separately and the dev server proxies API calls here.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// /health and /alive (from ServiceDefaults).
+app.MapDefaultEndpoints();
 
 string[] summaries = new[]
 {
@@ -37,9 +51,15 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast");
 
+// SPA client-side routing fallback: unmatched non-API requests return index.html.
+app.MapFallbackToFile("index.html");
+
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+namespace Dse.Api
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+    {
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
 }
