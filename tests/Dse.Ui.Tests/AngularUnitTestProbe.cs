@@ -1,5 +1,6 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
+
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -18,10 +19,10 @@ public sealed class AngularUnitTestProbe
         // Ensure deps exist (the .NET build/test phase doesn't necessarily run npm install first).
         if (!Directory.Exists(Path.Combine(repoRoot, "node_modules")))
         {
-            Assert.Equal(0, await RunNpmAsync("ci", repoRoot, ct));
+            Assert.Equal(expected: 0, await RunNpmAsync("ci", repoRoot, ct));
         }
 
-        Assert.Equal(0, await RunNpmAsync("run test:ci", repoRoot, ct));
+        Assert.Equal(expected: 0, await RunNpmAsync("run test:ci", repoRoot, ct));
     }
 
     private static async Task<int> RunNpmAsync(string arguments, string workingDirectory, CancellationToken ct)
@@ -50,6 +51,6 @@ public sealed class AngularUnitTestProbe
         }
 
         return directory?.FullName
-            ?? throw new InvalidOperationException("Could not locate the repository root (Dse.slnx).");
+               ?? throw new InvalidOperationException("Could not locate the repository root (Dse.slnx).");
     }
 }

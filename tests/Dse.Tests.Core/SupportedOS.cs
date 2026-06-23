@@ -7,10 +7,10 @@ namespace Dse.Tests;
 // and the existing OSPlatform structure is not appropriate for that. Plus, we like the name "macOS"
 // better than the name "OSX". :)
 
-public enum SupportedOS
+public enum SupportedOs
 {
-    FreeBSD = 1,
+    FreeBsd = 1,
     Linux = 2,
-    macOS = 3,
+    MacOs = 3,
     Windows = 4,
 }

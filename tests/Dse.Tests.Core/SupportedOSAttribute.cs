@@ -23,26 +23,26 @@ TestMethod will only run when executed on Linux or macOS; it will not run on Win
 dynamically skipped instead with a message about the current OS not being supported.
 */
 
-public sealed class SupportedOSAttribute(params SupportedOS[] supportedOSes) :
+public sealed class SupportedOsAttribute(params SupportedOs[] supportedOSes) :
     BeforeAfterTestAttribute
 {
-    private static readonly Dictionary<SupportedOS, OSPlatform> osMappings = new()
+    private static readonly Dictionary<SupportedOs, OSPlatform> s_osMappings = new()
     {
-        { SupportedOS.FreeBSD, OSPlatform.Create("FreeBSD") },
-        { SupportedOS.Linux, OSPlatform.Linux },
-        { SupportedOS.macOS, OSPlatform.OSX },
-        { SupportedOS.Windows, OSPlatform.Windows },
+        { SupportedOs.FreeBsd, OSPlatform.Create("FreeBSD") },
+        { SupportedOs.Linux, OSPlatform.Linux },
+        { SupportedOs.MacOs, OSPlatform.OSX },
+        { SupportedOs.Windows, OSPlatform.Windows },
     };
 
     public override void Before(MethodInfo methodUnderTest, IXunitTest test)
     {
         bool match = false;
 
-        foreach (SupportedOS supportedOS in supportedOSes)
+        foreach (SupportedOs supportedOs in supportedOSes)
         {
-            if (!osMappings.TryGetValue(supportedOS, out OSPlatform osPlatform))
+            if (!s_osMappings.TryGetValue(supportedOs, out OSPlatform osPlatform))
             {
-                throw new InvalidOperationException($"Supported OS value '{supportedOS}' is not a known OS");
+                throw new InvalidOperationException($"Supported OS value '{supportedOs}' is not a known OS");
             }
 
             if (RuntimeInformation.IsOSPlatform(osPlatform))
