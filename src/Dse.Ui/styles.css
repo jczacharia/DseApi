@@ -1,3 +1,271 @@
-/* You can add global styles to this file, and also import other style files */
+@layer theme, reset, base, material, components, utilities;
 
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource-variable/noto-sans' layer(base);
+@import '@fontsource-variable/space-grotesk' layer(base);
+@import '@fontsource-variable/cascadia-code' layer(base);
+@import '@fontsource-variable/material-symbols-rounded/fill.css' layer(base);
+
+@custom-variant dark (&:is(.dark *));
+.dark {
+  color-scheme: dark;
+}
+@custom-variant light (&:is(.light *));
+.light {
+  color-scheme: light;
+}
+
+@variant disabled {
+  &:where([data-disabled], :disabled) {
+    @slot;
+  }
+}
+@custom-variant hard-disabled {
+  &:where([data-disabled='hard']) {
+    @slot;
+  }
+}
+@custom-variant soft-disabled {
+  &:where([data-disabled='soft']) {
+    @slot;
+  }
+}
+@variant hover {
+  @media (any-hover: hover) {
+    &:where(:hover, [data-hover]):not([data-disabled], :disabled) {
+      @slot;
+    }
+  }
+}
+@variant focus-visible {
+  &:where(:focus-visible, [data-focus-visible]):not([data-disabled='hard'], :disabled) {
+    @slot;
+  }
+}
+@variant focus {
+  &:where(:focus, [data-focus]):not([data-disabled], :disabled) {
+    @slot;
+  }
+}
+@variant active {
+  @media (any-pointer: fine) {
+    &:where(:active, [data-active]):not([data-disabled], :disabled) {
+      @slot;
+    }
+  }
+}
+
+:root {
+  --surface-dark: light-dark(oklch(0.94 0.005 250), oklch(0.16 0.01 250));
+  --surface: light-dark(oklch(0.975 0.005 250), oklch(0.21 0.012 250));
+  --surface-light: light-dark(oklch(1 0 250), oklch(0.26 0.012 250));
+  --on-surface: light-dark(oklch(0.21 0.015 250), oklch(0.96 0.008 250));
+  --on-surface-muted: light-dark(oklch(0.46 0.02 250), oklch(0.71 0.012 250));
+  --border: light-dark(oklch(0.87 0.01 250), oklch(0.31 0.012 250));
+
+  --primary: light-dark(oklch(0.5 0.13 245), oklch(0.78 0.12 245));
+  --on-primary: light-dark(oklch(0.99 0.01 245), oklch(0.16 0.05 245));
+  --ring: light-dark(oklch(0.55 0.12 245), oklch(0.7 0.11 245));
+
+  --ember: light-dark(oklch(0.62 0.16 52), oklch(0.78 0.11 55));
+  --on-ember: light-dark(oklch(0.99 0.02 52), oklch(0.2 0.06 52));
+  --highlight: light-dark(oklch(0.9 0.09 80), oklch(0.74 0.12 60));
+
+  --success: light-dark(oklch(0.54 0.13 150), oklch(0.8 0.13 150));
+  --warning: light-dark(oklch(0.75 0.15 92), oklch(0.84 0.15 92));
+  --danger: light-dark(oklch(0.52 0.18 25), oklch(0.78 0.16 25));
+
+  --on-success: light-dark(oklch(0.99 0.02 150), oklch(0.18 0.05 150));
+  --on-warning: light-dark(oklch(0.25 0.05 92), oklch(0.2 0.05 92));
+  --on-danger: light-dark(oklch(0.99 0.02 25), oklch(0.18 0.05 25));
+}
+
+@theme inline {
+  --font-sans:
+    'Noto Sans Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --font-serif:
+    'Space Grotesk Variable', 'Merriweather Sans Variable', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono:
+    'Cascadia Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  --color-surface-dark: var(--surface-dark);
+  --color-surface: var(--surface);
+  --color-surface-light: var(--surface-light);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-muted: var(--on-surface-muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-ring: var(--ring);
+  --color-ember: var(--ember);
+  --color-on-ember: var(--on-ember);
+  --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-on-success: var(--on-success);
+  --color-on-warning: var(--on-warning);
+  --color-on-danger: var(--on-danger);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 shadow-black/20 focus-visible:z-1 dark:shadow-black/80;
+  }
+  :root {
+    @apply flex h-dvh w-dvw flex-col;
+    color-scheme: dark light;
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-surface-dark text-on-surface flex flex-1 flex-col font-sans text-sm;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  mark {
+    all: unset;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-on-surface-muted);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background: var(--color-surface-light);
+  }
+}
+
+@layer components {
+  ng-component,
+  router-outlet {
+    @apply contents;
+  }
+
+  [role='button']:not([data-disabled]),
+  [role='menuitem']:not([data-disabled]),
+  [data-slot='button']:not([data-disabled]),
+  button:not([data-disabled]) {
+    @apply cursor-pointer;
+  }
+
+  input[type='radio'] {
+    accent-color: var(--primary);
+  }
+
+  input[type='radio']:focus,
+  input[type='radio']:focus-visible {
+    @apply border-none ring-0 outline-none;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield; /* Added for general compatibility */
+  }
+
+  code {
+    @apply font-mono;
+  }
+  p {
+    @apply text-on-surface-muted text-pretty;
+  }
+  pre {
+    @apply font-mono text-sm whitespace-pre;
+  }
+}
+
+@layer material {
+  /* Filled rounded icons from the imported variable face (fill.css bakes FILL=1).
+     For outlined icons, import material-symbols-rounded/full.css and add a FILL-0 class. */
+  .icon {
+    font-family: 'Material Symbols Rounded Variable';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility h-fill-available {
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: fill-available;
+}
+@utility w-fill-available {
+  width: -webkit-fill-available;
+  width: -moz-available;
+  width: fill-available;
+}
+
+@utility loader-container {
+  @apply grid w-full flex-1 place-content-center p-4;
+}
+
+@utility shadow-s {
+  box-shadow:
+    inset 0 1px 2px light-dark(oklch(1 0.01 250 / 15%), oklch(1 0.01 250 / 15%)),
+    0 1px 2px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%)),
+    0 2px 4px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%));
+}
+@utility shadow-m {
+  box-shadow:
+    inset 0 1px 3px light-dark(oklch(1 0.01 250 / 15%), oklch(1 0.01 250 / 15%)),
+    0 2px 4px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%)),
+    0 4px 8px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%));
+}
+@utility shadow-l {
+  box-shadow:
+    inset 0 1px 4px light-dark(oklch(1 0.01 250 / 15%), oklch(1 0.01 250 / 15%)),
+    0 4px 8px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%)),
+    0 8px 16px light-dark(oklch(0 0.01 250 / 10%), oklch(0 0.01 250 / 60%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}

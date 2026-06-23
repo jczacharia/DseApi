@@ -3,10 +3,8 @@
           Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')))" />
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <ExcludeByFile>**/*.g.cs</ExcludeByFile>
     <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
-    <!-- CA1707: underscore-style test method names are idiomatic.
-         CA1716: test namespaces (e.g. *.Shared) are internal and never consumed from VB. -->
-    <NoWarn>$(NoWarn);CA1707;CA1716</NoWarn>
   </PropertyGroup>
 </Project>

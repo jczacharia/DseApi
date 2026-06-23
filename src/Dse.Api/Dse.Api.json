@@ -1,0 +1,35 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "DSE",
+    "description": "Enterprise Search",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "description": "DERP",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Api"
+    }
+  ]
+}
