@@ -1,6 +1,8 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
+using Dse.Core;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
@@ -10,7 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Dse.Tests;
 
-public sealed class ApiHost(ITestOutputHelper outputHelper) : WebApplicationFactory<Program>, IAsyncLifetime
+public sealed class ApiHost(ITestOutputHelper outputHelper, Action<IWebHostBuilder>? configure = null)
+    : WebApplicationFactory<Program>
 {
     private static readonly string s_webRoot = Path.GetFullPath(
         Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "dist", "dse", "browser"));
@@ -37,11 +40,9 @@ public sealed class ApiHost(ITestOutputHelper outputHelper) : WebApplicationFact
             logging.ClearProviders();
             logging.AddXUnit(outputHelper);
         });
+        configure?.Invoke(builder);
     }
 
-    public ValueTask InitializeAsync()
-    {
-        StartServer();
-        return ValueTask.CompletedTask;
-    }
+    public static ApiHost WithExtender(ITestOutputHelper outputHelper, Action<WebApplication> configure) =>
+        new(outputHelper, builder => builder.ConfigureServices(services => services.AddWebAppExtender(configure)));
 }

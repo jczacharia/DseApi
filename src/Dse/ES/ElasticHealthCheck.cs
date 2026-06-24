@@ -1,10 +1,9 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
-using System.Text.Json.Serialization;
+using Dse.Core;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Cluster;
-using Elastic.Esql.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using HealthStatus = Elastic.Clients.Elasticsearch.HealthStatus;
 
@@ -19,19 +18,20 @@ public sealed class ElasticHealthCheck(ElasticsearchClient elastic) : IHealthChe
         try
         {
             HealthResponse cluster = await elastic.Cluster.HealthAsync(cancellationToken);
+            Dictionary<string, object> data = cluster.ConvertToDictionary();
 
             if (cluster is { IsValidResponse: false })
             {
                 return new HealthCheckResult(context.Registration.FailureStatus,
-                    $"Cluster health call failed: {cluster.DebugInformation}");
+                    $"Cluster health call failed: {cluster.DebugInformation}", data: data);
             }
 
             return cluster.Status switch
             {
-                HealthStatus.Green => HealthCheckResult.Healthy($"Cluster '{cluster.ClusterName}' is green."),
-                HealthStatus.Yellow => HealthCheckResult.Degraded($"Cluster '{cluster.ClusterName}' is yellow."),
+                HealthStatus.Green => HealthCheckResult.Healthy($"Cluster '{cluster.ClusterName}' is green.", data),
+                HealthStatus.Yellow => HealthCheckResult.Degraded($"Cluster '{cluster.ClusterName}' is yellow.", data: data),
                 _ => new HealthCheckResult(context.Registration.FailureStatus,
-                    $"Cluster '{cluster.ClusterName}' status is {cluster.Status}"),
+                    $"Cluster '{cluster.ClusterName}' status is {cluster.Status}", data: data),
             };
         }
         catch (Exception ex)

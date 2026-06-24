@@ -30,7 +30,9 @@ public static class ProblemDetailsExtensions
 
     extension(ProblemDetailsOptions setup)
     {
+#pragma warning disable S3776
         public void ApplyCoreCustomization() => setup.CustomizeProblemDetails = context =>
+#pragma warning restore S3776
         {
             if (context.HttpContext.Items[HttpContextKey] is ProblemDetails setProblem)
             {

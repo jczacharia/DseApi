@@ -148,34 +148,3 @@ public sealed class ConfluenceDoc : IOpenApiComponent
         public required string? Prefix { get; set; }
     }
 }
-
-// [ElasticsearchMappingContext]
-// [Index<ConfluenceDoc>(
-//     Name = "source-confluence",
-//     WriteAlias = "source-confluence",
-//     ReadAlias = "source-confluence-search",
-//     DatePattern = "yyyy.MM.dd.HHmmss",
-//     RefreshInterval = "30s",
-//     Configuration = typeof(ConfluenceDocConfiguration)
-// )]
-// [Index<ConfluenceDoc>(
-//     NameTemplate = "test-confluence-{uuid}",
-//     RefreshInterval = "-1",
-//     Variant = "Test",
-//     Configuration = typeof(ConfluenceDocConfiguration)
-// )]
-// public static partial class ConfluenceContext;
-//
-// public sealed class ConfluenceDocConfiguration : SourceDocOptions<ConfluenceDoc>
-// {
-//     // DseKeyword (full search sub-fields) only for free-text-searched fields; identifiers/enums
-//     // (type, username, label prefix) stay plain keyword from their attribute — term/facet only.
-//     public override MappingsBuilder<ConfluenceDoc> ConfigureMappings(MappingsBuilder<ConfluenceDoc> mappings) => mappings
-//         .Title(b => b.DseKeyword())
-//         .Body(b => b.DseText())
-//         .Space(b => b.Key(k => k.DseKeyword()).Name(n => n.DseKeyword()))
-//         .VersionBy(v => v.DisplayName(d => d.DseKeyword()))
-//         .CreatedBy(c => c.DisplayName(d => d.DseKeyword()))
-//         .Ancestors(a => a.Title(t => t.DseKeyword()))
-//         .Labels(l => l.Name(n => n.DseKeyword()));
-// }

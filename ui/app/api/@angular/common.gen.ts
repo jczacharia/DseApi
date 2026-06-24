@@ -4,15 +4,100 @@ import {type HttpRequest, httpResource} from '@angular/common/http';
 
 import {client} from '../client.gen';
 import type {Options} from '../sdk.gen';
-import type {HelloWorldEndpointData, HelloWorldEndpointResponse} from '../types.gen';
+import type {
+  GetApiData,
+  GetApiResponse,
+  GetHealthData,
+  GetHealthElasticData,
+  GetHealthElasticResponse,
+  GetHealthLiveData,
+  GetHealthLiveResponse,
+  GetHealthReadyData,
+  GetHealthReadyResponse,
+  GetHealthResponse,
+  GetHealthStartupData,
+  GetHealthStartupResponse,
+} from '../types.gen';
 
 /**
- * DERP
+ * Full health report
+ *
+ * Every registered check.
  */
-export const helloWorldEndpointRequest = <ThrowOnError extends boolean = false>(
-  options?: Options<HelloWorldEndpointData, ThrowOnError>,
-): HttpRequest<HelloWorldEndpointResponse> =>
-  (options?.client ?? client).requestOptions<HelloWorldEndpointResponse, ThrowOnError>({
+export const getHealthRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetHealthData, ThrowOnError>,
+): HttpRequest<GetHealthResponse> =>
+  (options?.client ?? client).requestOptions<GetHealthResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/health',
+    ...options,
+  });
+
+/**
+ * Full health report
+ *
+ * Every registered check.
+ */
+export const getHealthStartupRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetHealthStartupData, ThrowOnError>,
+): HttpRequest<GetHealthStartupResponse> =>
+  (options?.client ?? client).requestOptions<GetHealthStartupResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/health/startup',
+    ...options,
+  });
+
+/**
+ * Liveness probe
+ *
+ * Process is up — no dependency checks run.
+ */
+export const getHealthLiveRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetHealthLiveData, ThrowOnError>,
+): HttpRequest<GetHealthLiveResponse> =>
+  (options?.client ?? client).requestOptions<GetHealthLiveResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/health/live',
+    ...options,
+  });
+
+/**
+ * Readiness probe
+ *
+ * Process and its ready-tagged dependencies are reachable.
+ */
+export const getHealthReadyRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetHealthReadyData, ThrowOnError>,
+): HttpRequest<GetHealthReadyResponse> =>
+  (options?.client ?? client).requestOptions<GetHealthReadyResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/health/ready',
+    ...options,
+  });
+
+/**
+ * Health: elastic
+ *
+ * The 'elastic' check in isolation.
+ */
+export const getHealthElasticRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetHealthElasticData, ThrowOnError>,
+): HttpRequest<GetHealthElasticResponse> =>
+  (options?.client ?? client).requestOptions<GetHealthElasticResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/health/elastic',
+    ...options,
+  });
+
+export const getApiRequest = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiData, ThrowOnError>,
+): HttpRequest<GetApiResponse> =>
+  (options?.client ?? client).requestOptions<GetApiResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/api',
@@ -20,12 +105,74 @@ export const helloWorldEndpointRequest = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * DERP
+ * Full health report
+ *
+ * Every registered check.
  */
-export const helloWorldEndpointResource = <ThrowOnError extends boolean = false>(
-  options?: () => Options<HelloWorldEndpointData, ThrowOnError> | undefined,
+export const getHealthResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetHealthData, ThrowOnError> | undefined,
 ) =>
-  httpResource<HelloWorldEndpointResponse>(() => {
+  httpResource<GetHealthResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? helloWorldEndpointRequest(opts) : undefined;
+    return opts ? getHealthRequest(opts) : undefined;
+  });
+
+/**
+ * Full health report
+ *
+ * Every registered check.
+ */
+export const getHealthStartupResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetHealthStartupData, ThrowOnError> | undefined,
+) =>
+  httpResource<GetHealthStartupResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getHealthStartupRequest(opts) : undefined;
+  });
+
+/**
+ * Liveness probe
+ *
+ * Process is up — no dependency checks run.
+ */
+export const getHealthLiveResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetHealthLiveData, ThrowOnError> | undefined,
+) =>
+  httpResource<GetHealthLiveResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getHealthLiveRequest(opts) : undefined;
+  });
+
+/**
+ * Readiness probe
+ *
+ * Process and its ready-tagged dependencies are reachable.
+ */
+export const getHealthReadyResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetHealthReadyData, ThrowOnError> | undefined,
+) =>
+  httpResource<GetHealthReadyResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getHealthReadyRequest(opts) : undefined;
+  });
+
+/**
+ * Health: elastic
+ *
+ * The 'elastic' check in isolation.
+ */
+export const getHealthElasticResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetHealthElasticData, ThrowOnError> | undefined,
+) =>
+  httpResource<GetHealthElasticResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getHealthElasticRequest(opts) : undefined;
+  });
+
+export const getApiResource = <ThrowOnError extends boolean = false>(
+  options?: () => Options<GetApiData, ThrowOnError> | undefined,
+) =>
+  httpResource<GetApiResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getApiRequest(opts) : undefined;
   });

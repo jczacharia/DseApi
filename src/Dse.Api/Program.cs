@@ -3,15 +3,13 @@
 
 using System.Reflection;
 using Dse;
+using Dse.Api;
 using Dse.Confluence;
 using Dse.Core;
 using Dse.ES;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
@@ -77,45 +75,20 @@ if (app.Environment.IsProduction())
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
-RouteGroupBuilder healthChecks = app.MapGroup("health").WithTags("Health").AllowAnonymous();
-healthChecks.MapHealthChecks("", new HealthCheckOptions().WithReportWriter());
+app.MapOpenApi();
+app.MapScalarApiReference();
 
-healthChecks.MapHealthChecks("startup", new HealthCheckOptions
-{
-    Predicate = static r => r.Tags.Contains("startup"),
-}.WithReportWriter());
-
-healthChecks.MapHealthChecks("live", new HealthCheckOptions
-{
-    Predicate = static r => r.Tags.Contains("live"),
-}.WithReportWriter());
-
-healthChecks.MapHealthChecks("ready", new HealthCheckOptions
-{
-    Predicate = static r => r.Tags.Contains("ready"),
-}.WithReportWriter());
-
-healthChecks.MapHealthChecks("sources", new HealthCheckOptions
-{
-    Predicate = static r => r.Tags.Contains("source"),
-}.WithReportWriter());
-
-var healthOpts = app.Services.GetRequiredService<IOptions<HealthCheckServiceOptions>>();
-foreach (string name in healthOpts.Value.Registrations.Select(r => r.Name))
-{
-    healthChecks.MapHealthChecks($"{name}", new HealthCheckOptions
-    {
-        Predicate = r => r.Name == name,
-    }.WithReportWriter());
-}
+app.MapDseHealthChecks();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-RouteGroupBuilder api = app.MapGroup("api").WithTags("Api").RequireAuthorization();
-api.MapOpenApi().AllowAnonymous();
-api.MapScalarApiReference().AllowAnonymous();
-api.MapCoreEndpoints();
+app.MapGroup("api").WithTags("Api").RequireAuthorization().MapCoreEndpoints();
+
+foreach (WebAppExtender reg in app.Services.GetServices<WebAppExtender>())
+{
+    reg.Register(app);
+}
 
 if (DseEnvironment.ServesSpa)
 {
@@ -124,4 +97,4 @@ if (DseEnvironment.ServesSpa)
     app.MapFallbackToFile("index.html");
 }
 
-app.Run();
+await app.RunAsync();

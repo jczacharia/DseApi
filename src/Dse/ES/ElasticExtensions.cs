@@ -45,7 +45,7 @@ public static class ElasticExtensions
 
             services
                 .AddHealthChecks()
-                .AddCheck<ElasticHealthCheck>("elastic", HealthStatus.Unhealthy, ["ready"], HealthCheckDefaults.ReadinessTimeout);
+                .AddCheck<ElasticHealthCheck>("elastic", HealthStatus.Unhealthy, ["ready"], HealthCheckCore.ReadinessTimeout);
         }
     }
 }

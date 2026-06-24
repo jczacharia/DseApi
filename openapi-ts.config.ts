@@ -14,20 +14,10 @@ export default defineConfig({
     },
     {
       name: '@angular/common',
-      httpRequests: true,
-      httpResources: 'flat',
-    },
-    '@hey-api/schemas',
-    '@hey-api/transformers',
-    'zod',
-    {
-      name: '@hey-api/sdk',
-      responseStyle: 'data',
-      transformer: true,
     },
     {
-      enums: 'typescript-const',
-      name: '@hey-api/typescript',
+      name: '@hey-api/transformers',
+      dates: 'temporal',
     },
   ],
 });

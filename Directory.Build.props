@@ -15,4 +15,11 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
+
+  <!-- Offline mirror of the SonarQube "Sonar way PNC" quality profile. See eng/sonar/README.md. -->
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" PrivateAssets="all" />
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)eng/sonar/sonar-quality-profile.globalconfig" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)eng/sonar/SonarLint.xml" />
+  </ItemGroup>
 </Project>

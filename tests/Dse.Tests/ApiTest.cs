@@ -1,6 +1,7 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dse.Tests;
@@ -11,6 +12,7 @@ public abstract class ApiTest(ITestOutputHelper outputHelper) : IAsyncLifetime
     private ApiHost Host { get; } = new(outputHelper);
     protected HttpClient Client => Host.CreateClient();
     protected IServiceProvider Services => _scope.ServiceProvider;
+    protected ITestOutputHelper Out => outputHelper;
 
     public virtual ValueTask InitializeAsync()
     {

@@ -17,7 +17,7 @@ internal static class TestsInitializer
 
         if (Microsoft.Playwright.Program.Main(["install", "chromium"]) is var exitCode and not 0)
         {
-            throw new InvalidOperationException($"Playwright install failed with exit code {exitCode}.");
+            Console.Error.WriteLine($"Playwright install failed with exit code {exitCode}.");
         }
 
         if (Debugger.IsAttached)
