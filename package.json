@@ -20,17 +20,6 @@
   },
   "private": true,
   "type": "module",
-  "lint-staged": {
-    "*.cs": [
-      "dotnet format --include"
-    ],
-    "*.{ts,js,html}": [
-      "eslint --fix"
-    ],
-    "*.{ts,js,html,json,css,scss,md,svg,csproj}": [
-      "prettier --ignore-path .gitignore --write"
-    ]
-  },
   "imports": {
     "#api/*": "./ui/app/api/*.ts",
     "#core/*": "./ui/app/core/*.ts",
