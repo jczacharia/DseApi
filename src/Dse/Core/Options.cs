@@ -24,19 +24,18 @@ public static partial class ServiceCollectionExtensions
     private static void AddOption<TOptions>(IServiceCollection services) where TOptions : class
     {
         var attr = typeof(TOptions).GetCustomAttribute<OptionAttribute>();
-
-        OptionsBuilder<TOptions> builder = services.AddOptions<TOptions>(attr?.Name);
+        var builder = services.AddOptions<TOptions>(attr?.Name);
+        builder.Services.AddSingleton<IValidateOptions<TOptions>>(s => new FluentValidateOptions<TOptions>(s, builder.Name));
 
         if (attr?.Section is { } section)
         {
             builder.BindConfiguration(section);
         }
 
-        if (!DseEnvironment.IsDocumentGenerationBuild())
+        if (!DseEnvironment.IsDocumentGenerationBuild)
         {
             builder.ValidateDataAnnotations();
             builder.ValidateOnStart();
-            builder.Services.AddSingleton<IValidateOptions<TOptions>>(s => new FluentValidateOptions<TOptions>(s, builder.Name));
         }
     }
 

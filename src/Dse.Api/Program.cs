@@ -1,6 +1,7 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
+using Dse;
 using Dse.Core;
 using Dse.ES;
 using Microsoft.AspNetCore.Authorization;
@@ -111,8 +112,11 @@ api.MapOpenApi().AllowAnonymous();
 api.MapScalarApiReference().AllowAnonymous();
 api.MapCoreEndpoints();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
-app.MapFallbackToFile("index.html");
+if (DseEnvironment.ServesSpa)
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
