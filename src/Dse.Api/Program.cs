@@ -1,7 +1,9 @@
 // Copyright (c) PNC Financial Services. All rights reserved.
 
 
+using System.Reflection;
 using Dse;
+using Dse.Confluence;
 using Dse.Core;
 using Dse.ES;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +16,8 @@ using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+Assembly[] dseAssemblies = [typeof(DseEnvironment).Assembly, typeof(Program).Assembly, typeof(ConfluenceDoc).Assembly];
 
 builder.Configuration.AddUserSecrets("dse");
 builder.Services.AddCoreOptions();
@@ -38,6 +42,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi(opts =>
 {
     opts.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+    opts.AddComponentsFromAssemblies(dseAssemblies);
     opts.AddDocumentTransformer(static (doc, _, _) =>
     {
         doc.Info.Title = "DSE";

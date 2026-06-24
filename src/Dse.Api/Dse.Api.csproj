@@ -34,6 +34,10 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run ci" />
   </Target>
 
+  <Target Name="ClientApiGen" AfterTargets="Build">
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run api:gen" />
+  </Target>
+
   <Target Name="PublishAngular" AfterTargets="ComputeFilesToPublish">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
     <ItemGroup>

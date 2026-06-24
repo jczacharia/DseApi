@@ -10,19 +10,21 @@ namespace Dse.Core;
 
 public interface IEndpoint
 {
-    static abstract void MapEndpoint(IEndpointRouteBuilder endpoints);
+    static abstract RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder endpoints);
 }
 
 public class HelloWorldEndpoint : IEndpoint
 {
-    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
-    {
+    public static RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder endpoints) =>
         endpoints.MapGet("/", () => "Hello World!").WithDescription("DERP");
-    }
 }
 
 public static partial class ServiceCollectionExtensions
 {
-    [ScanForTypes(AssignableTo = typeof(IEndpoint), Handler = nameof(IEndpoint.MapEndpoint))]
+    [ScanForTypes(AssignableTo = typeof(IEndpoint), Handler = nameof(AddEndpoint))]
     public static partial IEndpointRouteBuilder MapCoreEndpoints(this IEndpointRouteBuilder endpoints);
+
+    private static RouteHandlerBuilder AddEndpoint<TEndpoint>(IEndpointRouteBuilder endpoints)
+        where TEndpoint : class, IEndpoint =>
+        TEndpoint.MapEndpoint(endpoints).WithName(typeof(TEndpoint).Name);
 }

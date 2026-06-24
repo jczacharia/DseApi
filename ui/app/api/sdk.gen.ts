@@ -2,7 +2,7 @@
 
 import type {Client, ClientMeta, Options as Options2, RequestResult, TDataShape} from './client';
 import {client} from './client.gen';
-import type {GetApiData, GetApiResponses} from './types.gen';
+import type {HelloWorldEndpointData, HelloWorldEndpointResponses} from './types.gen';
 
 export type Options<
   TData extends TDataShape = TDataShape,
@@ -25,7 +25,11 @@ export type Options<
 /**
  * DERP
  */
-export const getApi = <ThrowOnError extends boolean = true>(
-  options?: Options<GetApiData, ThrowOnError>,
-): RequestResult<GetApiResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).get<GetApiResponses, unknown, ThrowOnError>({url: '/api', ...options});
+export const helloWorldEndpoint = <ThrowOnError extends boolean = true>(
+  options?: Options<HelloWorldEndpointData, ThrowOnError>,
+): RequestResult<HelloWorldEndpointResponses, unknown, ThrowOnError, 'data'> =>
+  (options?.client ?? client).get<HelloWorldEndpointResponses, unknown, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api',
+    ...options,
+  });
