@@ -20,7 +20,7 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#api": "./ui/app/api/index.ts",
+    "#api/*": "./ui/app/api/*.ts",
     "#core/*": "./ui/app/core/*.ts",
     "#features/*": "./ui/app/features/*.ts",
     "#shared/*": "./ui/app/shared/*.ts",

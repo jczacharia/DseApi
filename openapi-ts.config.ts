@@ -7,34 +7,26 @@ export default defineConfig({
     tsConfigPath: './tsconfig.app.json',
     postProcess: ['prettier'],
   },
-  // plugins: [
-  //   {name: '@angular/common', httpResources: 'flat'},
-  //   // {name: '@hey-api/client-angular', throwOnError: true},
-  //   {name: '@hey-api/schemas'},
-  //   {name: '@hey-api/transformers'},
-  //   // {name: 'zod'},
-  //   // {name: '@hey-api/sdk', transformer: true},
-  //   // {name: '@hey-api/typescript'},
-  // ],
   plugins: [
     {
       name: '@hey-api/client-angular',
       throwOnError: true,
     },
     {
+      name: '@angular/common',
       httpRequests: true,
       httpResources: 'flat',
-      name: '@angular/common',
     },
     '@hey-api/schemas',
     '@hey-api/transformers',
+    'zod',
     {
       name: '@hey-api/sdk',
       responseStyle: 'data',
       transformer: true,
     },
     {
-      enums: 'javascript',
+      enums: 'typescript-const',
       name: '@hey-api/typescript',
     },
   ],
