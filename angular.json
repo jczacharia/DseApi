@@ -38,13 +38,13 @@
         }
       },
       "root": "",
-      "sourceRoot": "src/Dse.Ui",
+      "sourceRoot": "ui",
       "prefix": "dse",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/Dse.Ui/main.ts",
+            "browser": "ui/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -52,7 +52,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/Dse.Ui/styles.css"]
+            "styles": ["ui/styles.css"]
           },
           "configurations": {
             "production": {
@@ -81,7 +81,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.cjs"
+            "proxyConfig": "proxy.conf.mjs"
           },
           "configurations": {
             "production": {
@@ -96,7 +96,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/Dse.Ui/**/*.ts", "src/Dse.Ui/**/*.html"]
+            "lintFilePatterns": ["ui/**/*.ts", "ui/**/*.html"]
           }
         },
         "test": {

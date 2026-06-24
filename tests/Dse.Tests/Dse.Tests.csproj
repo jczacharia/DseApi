@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+    <content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit"/>
+    <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Dse.Api/Dse.Api.csproj"/>
+    <ProjectReference Include="../../src/Dse.Api/Dse.Api.csproj" />
   </ItemGroup>
 
   <Target Name="BuildAngular" BeforeTargets="BeforeBuild" Condition="!Exists('$(SpaRoot)dist/dse/browser/index.html')">

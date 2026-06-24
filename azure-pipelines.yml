@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - "main"
+      - 'main'
 
 # #################################################
 # PNC Azure DevOps Enterprise Automation Pipeline
@@ -11,32 +11,32 @@ variables:
 
   # Update the following lines to get the automation pipeline working:
   - name: version
-    value: "2.2.2"
+    value: '2.2.2'
   - name: mnemonic
     value: dse
   # This has to be lower case as well due to artifactory
   - name: app_name
     value: searchapi
   - name: manifest_repo
-    value: "git.pncint.net/dse/dse-deploy.git"
+    value: 'git.pncint.net/dse/dse-deploy.git'
   - name: build_type
     value: dotnet
   - name: dotnet_version
-    value: "10.0"
+    value: '10.0'
   - name: helm_deploy
     value: true
   - name: sonar_custom_exclusions
-    value: "*Tests*.cs,*testresult*.xml,*opencover*.xml,**/Program.cs,*Dockerfile*,**/quality_engineering/**"
+    value: '*Tests*.cs,*testresult*.xml,*opencover*.xml,**/Program.cs,*Dockerfile*,**/quality_engineering/**'
   - name: qfaasDirectory
-    value: "quality_engineering/DseDataPipelines-services"
+    value: 'quality_engineering/DseDataPipelines-services'
   - name: restore_proj
-    value: "Dse.slnx"
+    value: 'Dse.slnx'
   - name: build_proj
-    value: "Dse.slnx"
+    value: 'Dse.slnx'
   - name: publish_proj
-    value: "src/Dse.Api/Dse.Api.csproj"
+    value: 'src/Dse.Api/Dse.Api.csproj'
   - name: runtime_identifier
-    value: "linux-x64"
+    value: 'linux-x64'
 
 resources:
   repositories:

@@ -1,12 +1,4 @@
-import {
-  assertNotNil,
-  isFunction,
-  isNil,
-  isNonEmptyArray,
-  isNonEmptyString,
-  isRecord,
-  notNil,
-} from './validators';
+import {assertNotNil, isFunction, isNil, isNonEmptyArray, isNonEmptyString, isRecord, notNil} from './validators';
 
 describe('validators', () => {
   describe('isNil', () => {

@@ -26,7 +26,11 @@
     <ProjectReference Include="..\Dse\Dse.csproj" />
   </ItemGroup>
 
-  <Target Name="EnsureNpmInstall" BeforeTargets="BeforeBuild;PublishAngular" Condition="!Exists('$(SpaRoot)node_modules')">
+  <Target
+    Name="EnsureNpmInstall"
+    BeforeTargets="BeforeBuild;PublishAngular"
+    Condition="!Exists('$(SpaRoot)node_modules')"
+  >
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run ci" />
   </Target>
 

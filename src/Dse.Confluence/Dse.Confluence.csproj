@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -14,5 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Dse\Dse.csproj" />
   </ItemGroup>
-
 </Project>

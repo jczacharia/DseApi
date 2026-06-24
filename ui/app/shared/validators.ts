@@ -33,10 +33,7 @@ export function assertNotNil<T>(
  * Use when validating user-provided or attribute-sourced strings where whitespace-only values
  * should count as empty via the `trim` option.
  */
-export function isNonEmptyString(
-  value: unknown,
-  {trim = false}: {trim?: boolean} = {},
-): value is string {
+export function isNonEmptyString(value: unknown, {trim = false}: {trim?: boolean} = {}): value is string {
   if (typeof value !== 'string') return false;
   return (trim ? value.trim() : value).length > 0;
 }
@@ -45,9 +42,7 @@ export function isNonEmptyString(
  * Use when you need to guarantee an array has at least one element before safely indexing `[0]`
  * or destructuring a head.
  */
-export function isNonEmptyArray<T>(
-  value: readonly T[] | null | undefined,
-): value is readonly [T, ...T[]] {
+export function isNonEmptyArray<T>(value: readonly T[] | null | undefined): value is readonly [T, ...T[]] {
   return Array.isArray(value) && value.length > 0;
 }
 
@@ -56,11 +51,7 @@ export function isNonEmptyArray<T>(
  * Excludes arrays, class instances, `Map`, `Set`, `Date`, `Promise`, `RegExp`, etc.
  */
 export function isRecord(value: unknown): value is Record<string, unknown> {
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    typeof value?.[Symbol.iterator as never] === 'function'
-  ) {
+  if (value === null || typeof value !== 'object' || typeof value?.[Symbol.iterator as never] === 'function') {
     return false;
   }
   const proto = Object.getPrototypeOf(value) as object | null;

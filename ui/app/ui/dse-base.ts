@@ -1,4 +1,4 @@
-import {softDisabledAttribute, hostAttr, nonEmptyStringAttribute} from '#shared/attr';
+import {hostAttr, nonEmptyStringAttribute, softDisabledAttribute} from '#shared/attr';
 import {supportsDisabled} from '#shared/dom-validators';
 import {IdGenerator} from '#shared/id-generator';
 import {injectElement} from '#shared/inject-element';

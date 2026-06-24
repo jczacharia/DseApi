@@ -2,12 +2,22 @@ import eslint from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
 import angular from 'angular-eslint';
 import prettierConfig from 'eslint-config-prettier';
-import {defineConfig} from 'eslint/config';
+import {defineConfig, includeIgnoreFile} from 'eslint/config';
+import {fileURLToPath} from 'node:url';
 import tseslint from 'typescript-eslint';
 
+const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
+
 export default defineConfig([
+  includeIgnoreFile(gitignorePath, {gitignoreResolution: true}),
   {
-    files: ['src/Dse.Ui/**/*.ts'],
+    ignores: ['src/**', 'ui/app/api/**', 'ui/index.html'],
+  },
+  {
+    rules: {'linebreak-style': ['error', 'unix']},
+  },
+  {
+    files: ['ui/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.recommended,
@@ -66,37 +76,32 @@ export default defineConfig([
       ],
 
       // Enforce modern Angular patterns
-      '@angular-eslint/prefer-standalone': 'error',
-      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
+
       '@angular-eslint/no-host-metadata-property': 'off',
-      '@angular-eslint/prefer-output-readonly': 'error',
-      '@angular-eslint/prefer-output-emitter-ref': 'error',
-      '@angular-eslint/prefer-signals': 'error',
+      '@angular-eslint/no-input-rename': 'off',
+      '@angular-eslint/no-output-rename': 'off',
       '@angular-eslint/no-uncalled-signals': 'error',
-      '@angular-eslint/sort-lifecycle-methods': 'error',
-      '@angular-eslint/directive-selector': 'off',
-      '@angular-eslint/component-selector': 'off',
       '@angular-eslint/prefer-inject': 'off',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off', // Angular 22 defaults to OnPush
+      '@angular-eslint/prefer-output-emitter-ref': 'error',
+      '@angular-eslint/prefer-output-readonly': 'error',
+      '@angular-eslint/prefer-signals': 'error',
+      '@angular-eslint/prefer-standalone': 'error',
+      '@angular-eslint/sort-lifecycle-methods': 'error',
     },
   },
   {
-    files: ['**/*.html'],
+    files: ['ui/app/ui/**/*.ts'],
+    rules: {
+      '@angular-eslint/directive-selector': ['error', {type: 'attribute', prefix: 'dse', style: 'camelCase'}],
+      '@angular-eslint/component-selector': ['error', {type: 'element', prefix: 'dse', style: 'kebab-case'}],
+    },
+  },
+  {
+    files: ['ui/**/*.html'],
     extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     rules: {
-      '@angular-eslint/template/attributes-order': [
-        'warn',
-        {
-          alphabetical: true,
-          order: [
-            'STRUCTURAL_DIRECTIVE',
-            'TEMPLATE_REFERENCE',
-            'ATTRIBUTE_BINDING',
-            'INPUT_BINDING',
-            'TWO_WAY_BINDING',
-            'OUTPUT_BINDING',
-          ],
-        },
-      ],
+      '@angular-eslint/template/attributes-order': ['warn', {alphabetical: true}],
       '@angular-eslint/template/button-has-type': 'off',
       '@angular-eslint/template/cyclomatic-complexity': 'off',
       '@angular-eslint/template/eqeqeq': 'error',
@@ -113,7 +118,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.spec.ts'],
+    files: ['ui/**/*.spec.ts'],
     rules: {
       '@angular-eslint/directive-selector': 'off',
       '@angular-eslint/component-selector': 'off',
@@ -138,7 +143,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.spec.ts'],
+    files: ['ui/**/*.spec.ts'],
     plugins: {
       vitest,
     },
