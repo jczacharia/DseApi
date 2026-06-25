@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@ui/button": ["./ui/app/ui/button/src/index.ts"],
+      "@ui/utils": ["./ui/app/ui/utils/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

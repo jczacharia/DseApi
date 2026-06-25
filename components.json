@@ -1,0 +1,5 @@
+{
+  "componentsPath": "ui/app/ui",
+  "importAlias": "@ui",
+  "style": "vega"
+}
