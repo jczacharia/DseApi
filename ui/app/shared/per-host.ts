@@ -1,4 +1,5 @@
 import {injectElement} from '#shared/inject-element';
+import {getOrInsertComputed} from '#shared/map-polyfills';
 import {inject, InjectionToken, Injector, runInInjectionContext, type ProviderToken, type Type} from '@angular/core';
 
 const HOST_MAP = new InjectionToken(ngDevMode ? 'HOST_MAP' : '', {
@@ -8,8 +9,8 @@ const HOST_MAP = new InjectionToken(ngDevMode ? 'HOST_MAP' : '', {
 function resolver<T>(token: ProviderToken<T>, factory: () => T): T {
   const element = injectElement();
   const injector = inject(Injector);
-  const map = inject(HOST_MAP).getOrInsertComputed(element, () => new Map()) as Map<ProviderToken<T>, T>;
-  return map.getOrInsertComputed(token, () => runInInjectionContext(injector, factory));
+  const map = getOrInsertComputed(inject(HOST_MAP), element, () => new Map()) as Map<ProviderToken<T>, T>;
+  return getOrInsertComputed(map, token, () => runInInjectionContext(injector, factory));
 }
 
 /**

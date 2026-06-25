@@ -1,4 +1,12 @@
-import {computed, isSignal, linkedSignal, signal, type CreateComputedOptions, type Signal} from '@angular/core';
+import {
+  computed,
+  isSignal,
+  linkedSignal,
+  signal,
+  type CreateComputedOptions,
+  type Signal,
+  type WritableSignal,
+} from '@angular/core';
 import {deepComputed, type DeepSignal} from '@ngrx/signals';
 import type {WithInjector} from '@signality/core';
 import {setupContext} from '@signality/core/internal';
@@ -67,6 +75,17 @@ export interface StatePipelineFunction {
   deep<T extends object>(source: T | Signal<T>, opts?: StatePipelineOptions<NoInfer<T>>): PipelineDeepSignal<T>;
 }
 
+interface Registration<T> {
+  readonly priority: number;
+  readonly handler: StatePipelineHandler<T>;
+}
+
+// Module-scoped so the remover closure stays within the function-nesting budget.
+const removeHandler =
+  <T>(state: WritableSignal<Registration<T>[]>, handler: StatePipelineHandler<T>) =>
+  () =>
+    state.update((h) => h.filter((x) => x.handler !== handler));
+
 function createPipeline<T>(
   source: T | Signal<T>,
   options?: StatePipelineOptions<NoInfer<T>>,
@@ -74,11 +93,11 @@ function createPipeline<T>(
   const link = isSignal(source) ? linkedSignal(source) : signal(source);
   const finalize = options?.finalize ?? ((value: T) => value);
 
-  const state = signal<{priority: number; handler: StatePipelineHandler<T>}[]>([]);
+  const state = signal<Registration<T>[]>([]);
 
   function intercept(handler: StatePipelineHandler<T>, opts?: StatePipelineInterceptOptions): () => void {
     state.update((h) => [{priority: opts?.priority ?? 0, handler}, ...h]);
-    const rm = () => state.update((h) => h.filter((x) => x.handler !== handler));
+    const rm = removeHandler(state, handler);
     if (opts?.manualCleanup) return rm;
     const {runInContext} = setupContext(opts?.injector, intercept);
     return runInContext(({onCleanup}) => {

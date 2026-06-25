@@ -79,7 +79,7 @@ const cloneDeep = <T>(v: T): T => (v === null || typeof v !== 'object' ? v : str
  */
 export function mergeEsQuery<T extends estypes.SearchRequest>(base: T, override: DeepPartial<NoInfer<T>>): T {
   const val = mergeNode(base, override, '', '') as T;
-  if (!Object.keys(val.query || {}).length) delete val.query;
+  if (!Object.keys(val.query ?? {}).length) delete val.query;
   return val;
 }
 
@@ -94,38 +94,48 @@ function mergeNode(left: unknown, right: unknown, key: string, parentKey: string
   // (`match`, `term`, `bool`, ...). When both sides agree on that key, we
   // recurse so `bool.must` etc. can compose. When they disagree, right wins
   // wholesale to prevent chimeras like `{ match: {...}, term: {...} }`.
-  if (key === 'query' && isPlainObject(left) && isPlainObject(right)) {
-    const lk = Object.keys(left);
-    const rk = Object.keys(right);
-    if (!(lk.length === 1 && rk.length === 1 && lk[0] === rk[0])) {
-      return cloneDeep(right);
-    }
+  if (key === 'query' && isPlainObject(left) && isPlainObject(right) && !sameSingleKey(left, right)) {
+    return cloneDeep(right);
   }
 
   const leftIsArray = Array.isArray(left);
   const rightIsArray = Array.isArray(right);
 
   if (CONCAT_KEYS.has(key) && (leftIsArray || rightIsArray)) {
-    const leftArr = leftIsArray ? (left as unknown[]) : left === undefined ? [] : [left];
-    const rightArr = rightIsArray ? (right as unknown[]) : [right];
-    const merged = [...cloneDeep(leftArr), ...cloneDeep(rightArr)];
-    if (DEDUP_CONCAT_KEYS.has(key)) {
-      return Array.from(new Set(merged as (string | number)[]));
-    }
-    return merged;
+    return concatClauses(left, right, key, leftIsArray, rightIsArray);
   }
 
-  if (leftIsArray && rightIsArray) return cloneDeep(right);
-  if (leftIsArray !== rightIsArray) return cloneDeep(right);
+  // A type mismatch (array vs non-array) or two arrays outside a concat key: right wins wholesale.
+  if (leftIsArray || rightIsArray) return cloneDeep(right);
 
-  if (isPlainObject(left) && isPlainObject(right)) {
-    const out: Plain = {};
-    for (const k of Object.keys(left)) out[k] = cloneDeep(left[k]);
-    for (const k of Object.keys(right)) {
-      out[k] = mergeNode(left[k], right[k], k, key);
-    }
-    return out;
-  }
+  if (isPlainObject(left) && isPlainObject(right)) return mergeObjects(left, right, key);
 
   return cloneDeep(right);
+}
+
+/** Both sides are single-key containers naming the same clause (e.g. both `{ bool: ... }`). */
+function sameSingleKey(left: Plain, right: Plain): boolean {
+  const lk = Object.keys(left);
+  const rk = Object.keys(right);
+  return lk.length === 1 && rk.length === 1 && lk[0] === rk[0];
+}
+
+/** Concatenate clause arrays, normalizing the `Container | Container[]` overload and deduping field-path keys. */
+function concatClauses(left: unknown, right: unknown, key: string, leftIsArray: boolean, rightIsArray: boolean): unknown {
+  let leftArr: unknown[];
+  if (leftIsArray) leftArr = left as unknown[];
+  else if (left === undefined) leftArr = [];
+  else leftArr = [left];
+  const rightArr = rightIsArray ? (right as unknown[]) : [right];
+  const merged = [...cloneDeep(leftArr), ...cloneDeep(rightArr)];
+  if (DEDUP_CONCAT_KEYS.has(key)) return Array.from(new Set(merged as (string | number)[]));
+  return merged;
+}
+
+/** Key-wise deep merge of two plain objects; left's keys seed the result, right's keys recurse. */
+function mergeObjects(left: Plain, right: Plain, key: string): Plain {
+  const out: Plain = {};
+  for (const k of Object.keys(left)) out[k] = cloneDeep(left[k]);
+  for (const k of Object.keys(right)) out[k] = mergeNode(left[k], right[k], k, key);
+  return out;
 }

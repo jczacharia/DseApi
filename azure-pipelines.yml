@@ -26,7 +26,7 @@ variables:
   - name: helm_deploy
     value: true
   - name: sonar_custom_exclusions
-    value: '*Tests*.cs,*testresult*.xml,*opencover*.xml,**/Program.cs,*Dockerfile*,**/quality_engineering/**'
+    value: '*Tests*.cs,*testresult*.xml,*opencover*.xml,**/Program.cs,*Dockerfile*,**/quality_engineering/**,**/ui/app/api/**'
   - name: qfaasDirectory
     value: 'quality_engineering/DseDataPipelines-services'
   - name: restore_proj

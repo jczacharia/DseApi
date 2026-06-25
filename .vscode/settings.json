@@ -14,5 +14,9 @@
     ["host:\\s*\\{([^}]*)\\}", "['\"`]([^'\"`]*)['\"`]"],
     "(?:class|className)\\s*[=:]\\s*['\"`]([^'\"`]*)['\"`]",
     "(?:cva|cn|cx|clsx)\\s*\\([^)]*['\"`]([^'\"`]*)['\"`]"
-  ]
+  ],
+  "sonarlint.connectedMode.project": {
+    "connectionId": "http-localhost-9000",
+    "projectKey": "dse"
+  }
 }

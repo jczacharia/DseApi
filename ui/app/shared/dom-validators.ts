@@ -78,7 +78,7 @@ const TYPEABLE_BASE =
   "[role='textbox']:not([aria-disabled='true'])," +
   "[role='searchbox']:not([aria-disabled='true'])";
 
-const TYPEABLE_SELECTOR = TYPEABLE_BASE.replace(/,/g, ':not([readonly]),') + ':not([readonly])';
+const TYPEABLE_SELECTOR = TYPEABLE_BASE.replaceAll(',', ':not([readonly]),') + ':not([readonly])';
 const TYPEABLE_SELECTOR_ALL = TYPEABLE_BASE;
 
 /**

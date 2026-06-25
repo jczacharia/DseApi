@@ -3,6 +3,35 @@
     "angular-cli": {
       "command": "npx",
       "args": ["-y", "@angular/cli", "mcp"]
+    },
+    "rider": {
+      "url": "http://127.0.0.1:64342/sse",
+      "type": "sse"
+    },
+    "sonarqube": {
+      "command": "podman",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--network=host",
+        "-e",
+        "SONARQUBE_TOKEN",
+        "-e",
+        "SONARQUBE_URL",
+        "-e",
+        "SONARQUBE_IDE_PORT",
+        "docker.io/mcp/sonarqube"
+      ],
+      "env": {
+        "SONARQUBE_URL": "http://localhost:9000",
+        "SONARQUBE_TOKEN": "${SONARQUBE_TOKEN}",
+        "SONARQUBE_IDE_PORT": "64121"
+      }
+    },
+    "spartan-ui": {
+      "command": "npx",
+      "args": ["-y", "@spartan-ng/mcp"]
     }
   }
 }

@@ -14,7 +14,7 @@ export abstract class SourceClient {
     setupSync(() => {
       listener(inject(DOCUMENT), 'keydown', (event) => {
         if (event.altKey && event.key.toLowerCase() === 'c') {
-          void this.clearCache();
+          this.clearCache();
           console.debug(`[SourceClient] Query cache cleared via Alt+C for source ${this.#source.key}`);
         }
       });

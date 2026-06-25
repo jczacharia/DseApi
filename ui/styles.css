@@ -191,7 +191,7 @@
   /* Filled rounded icons from the imported variable face (fill.css bakes FILL=1).
      For outlined icons, import material-symbols-rounded/full.css and add a FILL-0 class. */
   .icon {
-    font-family: 'Material Symbols Rounded Variable';
+    font-family: 'Material Symbols Rounded Variable', serif;
     font-weight: normal;
     font-style: normal;
     font-size: 24px;

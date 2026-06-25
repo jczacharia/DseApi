@@ -5,7 +5,7 @@ const SUFFIX = 'Enterprise Search';
 
 export function createPageTitle(...values: (string | undefined | null)[]) {
   let gen = SUFFIX;
-  for (let val of values.reverse()) {
+  for (let val of [...values].reverse()) {
     val = val?.trim();
     if (val) gen = `${val} - ${gen}`;
   }

@@ -1,0 +1,28 @@
+# Project dictionary for CSpell. One word per line, case-insensitive.
+# Add domain/tooling terms here (or via the editor's "Add to dictionary" action).
+
+# Elasticsearch / .NET
+aggs
+estypes
+Hsts
+msbuild
+slnx
+xunit
+
+# Tooling / infra
+chgrp
+dedup
+pncint
+PWDEBUG
+Qube
+sonarjs
+
+# Angular / web / fonts
+ngsrc
+opsz
+signality
+wght
+WCAG
+
+# Domain test data
+DSEE

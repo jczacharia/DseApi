@@ -1,4 +1,4 @@
-import {computed, signal, type Signal} from '@angular/core';
+import {computed, signal, type Signal, type WritableSignal} from '@angular/core';
 import type {WithInjector} from '@signality/core';
 import {setupContext} from '@signality/core/internal';
 
@@ -42,12 +42,23 @@ export interface EventPipeline<E> {
  * Use when building a new {@link EventPipeline} instance for a given event shape; callers wire
  * the transport (listener, doc event, etc.) by invoking the returned `dispatch`.
  */
+interface Registration<E> {
+  readonly priority: number;
+  readonly handler: EventPipelineHandler<E>;
+}
+
+// Module-scoped so the remover closure stays within the function-nesting budget.
+const removeHandler =
+  <E>(state: WritableSignal<Registration<E>[]>, handler: EventPipelineHandler<E>) =>
+  () =>
+    state.update((h) => h.filter((x) => x.handler !== handler));
+
 export function eventPipeline<E>(): EventPipeline<E> {
-  const state = signal<{priority: number; handler: EventPipelineHandler<E>}[]>([]);
+  const state = signal<Registration<E>[]>([]);
 
   function intercept(handler: EventPipelineHandler<E>, opts?: EventPipelineInterceptOptions): () => void {
     state.update((h) => [{priority: opts?.priority ?? 0, handler}, ...h]);
-    const rm = () => state.update((h) => h.filter((x) => x.handler !== handler));
+    const rm = removeHandler(state, handler);
     if (opts?.manualCleanup) return rm;
     const {runInContext} = setupContext(opts?.injector, intercept);
     return runInContext(({onCleanup}) => {

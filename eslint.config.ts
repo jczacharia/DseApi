@@ -2,11 +2,9 @@ import eslint from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
 import angular from 'angular-eslint';
 import prettierConfig from 'eslint-config-prettier';
-import sonarjs from 'eslint-plugin-sonarjs';
 import {defineConfig, includeIgnoreFile} from 'eslint/config';
 import {fileURLToPath} from 'node:url';
 import tseslint from 'typescript-eslint';
-import {sonarjsPncRules} from './eng/sonar/sonarjs-pnc-rules.mjs';
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
@@ -17,12 +15,6 @@ export default defineConfig([
   },
   {
     rules: {'linebreak-style': ['error', 'unix']},
-  },
-  {
-    // Exact "Sonar way PNC" TypeScript profile, pinned from eng/sonar/. Generated — see eng/sonar/README.md.
-    files: ['ui/**/*.ts'],
-    plugins: {sonarjs},
-    rules: sonarjsPncRules,
   },
   {
     files: ['ui/**/*.ts'],

@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/prefer-function-type */
-/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-
 import {inject, Injector, runInInjectionContext} from '@angular/core';
-
-export interface Lazy<T> {
-  (): T;
-}
 
 /**
  * Lazily computes and caches a value on first access.
  */
-export class Lazy<T> {
-  #cached?: T;
-  constructor(factory: () => T) {
-    const injector = inject(Injector);
-    return () => (this.#cached ??= runInInjectionContext(injector, factory));
+export class Lazy<TValue> {
+  #cached?: TValue;
+  #computed = false;
+  readonly #injector = inject(Injector);
+
+  constructor(private readonly factory: () => TValue) {}
+
+  get value(): TValue {
+    if (!this.#computed) {
+      this.#cached = runInInjectionContext(this.#injector, this.factory);
+      this.#computed = true;
+    }
+    return this.#cached!;
   }
 }

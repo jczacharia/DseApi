@@ -17,8 +17,8 @@ import {DseStyle} from './dse-style';
     {directive: DseClass, inputs: ['class', 'className']},
   ],
   host: {
-    '[attr.id]': 'id()',
-    '[attr.role]': 'role()',
+    '[attr.id]': 'resolvedId()',
+    '[attr.role]': 'resolvedRole()',
     '[attr.disabled]': 'disabledAttr()',
     '[attr.aria-disabled]': 'ariaDisabledAttr()',
     '[attr.data-disabled]': 'disabledVariant()',
@@ -30,21 +30,21 @@ export class DseBase {
 
   readonly #generatedId = this.#idGenerator();
   readonly #initId = nonEmptyStringAttribute(hostAttr('id'));
-  readonly idInput = input(this.#initId, {alias: 'id', transform: nonEmptyStringAttribute});
-  readonly id = computed(() => this.idInput() || this.#generatedId);
+  readonly id = input(this.#initId, {transform: nonEmptyStringAttribute});
+  readonly resolvedId = computed(() => this.id() || this.#generatedId);
 
   readonly #initRole = nonEmptyStringAttribute(hostAttr('role'));
-  readonly roleInput = input(this.#initRole, {alias: 'role', transform: nonEmptyStringAttribute});
-  readonly role = statePipeline(this.roleInput);
+  readonly role = input(this.#initRole, {transform: nonEmptyStringAttribute});
+  readonly resolvedRole = statePipeline(this.role);
   readonly roleChange = output<string | null>();
 
   readonly nativeDisable = supportsDisabled(this.#element);
-  readonly disabledInput = input(false, {alias: 'disabled', transform: softDisabledAttribute});
-  readonly disabled = statePipeline(this.disabledInput);
+  readonly disabled = input(false, {transform: softDisabledAttribute});
+  readonly resolvedDisabled = statePipeline(this.disabled);
   readonly disabledChange = output<boolean | 'soft'>();
 
-  readonly softDisabled = computed(() => this.disabled() === 'soft');
-  readonly hardDisabled = computed(() => this.disabled() === true);
+  readonly softDisabled = computed(() => this.resolvedDisabled() === 'soft');
+  readonly hardDisabled = computed(() => this.resolvedDisabled() === true);
   readonly disabledVariant = computed(() => {
     if (this.softDisabled()) return 'soft';
     if (this.hardDisabled()) return 'hard';
@@ -54,11 +54,11 @@ export class DseBase {
   protected readonly disabledAttr = computed(() => (this.nativeDisable && this.hardDisabled() ? '' : null));
   protected readonly ariaDisabledAttr = computed(() => {
     if (this.nativeDisable) return this.softDisabled() ? 'true' : null;
-    return this.disabled() ? 'true' : null;
+    return this.resolvedDisabled() ? 'true' : null;
   });
 
   constructor() {
-    watcher(this.disabled, (disabled) => this.disabledChange.emit(disabled));
-    watcher(this.role, (role) => this.roleChange.emit(role));
+    watcher(this.resolvedDisabled, (disabled) => this.disabledChange.emit(disabled));
+    watcher(this.resolvedRole, (role) => this.roleChange.emit(role));
   }
 }

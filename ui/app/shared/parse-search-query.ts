@@ -11,7 +11,9 @@ export function parseSearchQuery(raw: string): ParsedSearch {
   const q = raw.trim();
   if (q.length >= 2 && q.startsWith('/')) {
     const caseInsensitive = q.endsWith('/i');
-    const close = caseInsensitive ? q.length - 2 : q.endsWith('/') ? q.length - 1 : -1;
+    let close = -1;
+    if (caseInsensitive) close = q.length - 2;
+    else if (q.endsWith('/')) close = q.length - 1;
     if (close > 1) return {kind: 'regex', pattern: q.slice(1, close), caseInsensitive};
   }
   return {kind: 'simple', query: q};

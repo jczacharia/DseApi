@@ -3,7 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["vitest/globals"]
+    "sourceMap": true,
+    "inlineSources": true,
+    "noUncheckedIndexedAccess": false,
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["ui/**/*.spec.ts"]
+  "include": ["ui/**/*.ts"]
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Logging;
 
-[assembly: CaptureConsole(CaptureError = true, CaptureOut = true)]
+[assembly: CaptureConsole(CaptureError = false, CaptureOut = false)]
 
 namespace Dse.Tests;
 

@@ -1,13 +1,14 @@
 import type {ParsedSearch} from '#shared/parse-search-query';
 
-const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 // A global matcher for the parsed query, or null when there's nothing safe to highlight (empty
 // query, or an invalid user regex — in which case the content is left untouched rather than throw).
 function buildMatcher(parsed: ParsedSearch): RegExp | null {
   try {
     if (parsed.kind === 'regex') {
-      return parsed.pattern ? new RegExp(parsed.pattern, parsed.caseInsensitive ? 'gi' : 'g') : null;
+      if (!parsed.pattern) return null;
+      return new RegExp(parsed.pattern, parsed.caseInsensitive ? 'gi' : 'g');
     }
     const terms = parsed.query.split(/\s+/).filter(Boolean).map(escapeRegExp);
     return terms.length ? new RegExp(terms.join('|'), 'gi') : null;
@@ -41,21 +42,27 @@ export function highlightHtml(html: string, parsed: ParsedSearch, doc: Document)
   }
 
   for (const text of targets) {
-    re.lastIndex = 0;
-    if (!re.test(text.data)) continue;
-    re.lastIndex = 0;
-    const frag = doc.createDocumentFragment();
-    let last = 0;
-    for (let m = re.exec(text.data); m; m = re.exec(text.data)) {
-      if (m.index > last) frag.append(text.data.slice(last, m.index));
-      const mark = doc.createElement('mark');
-      mark.textContent = m[0];
-      frag.append(mark);
-      last = m.index + m[0].length;
-      if (m[0].length === 0) re.lastIndex++; // never spin on a zero-width match
-    }
-    if (last < text.data.length) frag.append(text.data.slice(last));
-    text.replaceWith(frag);
+    const frag = markMatches(text.data, re, doc);
+    if (frag) text.replaceWith(frag);
   }
   return tpl.innerHTML;
+}
+
+// Build a fragment wrapping each match of `re` in `<mark>`, or null when nothing matched.
+function markMatches(data: string, re: RegExp, doc: Document): DocumentFragment | null {
+  re.lastIndex = 0;
+  if (!re.test(data)) return null;
+  re.lastIndex = 0;
+  const frag = doc.createDocumentFragment();
+  let last = 0;
+  for (let m = re.exec(data); m; m = re.exec(data)) {
+    if (m.index > last) frag.append(data.slice(last, m.index));
+    const mark = doc.createElement('mark');
+    mark.textContent = m[0];
+    frag.append(mark);
+    last = m.index + m[0].length;
+    if (m[0].length === 0) re.lastIndex++; // never spin on a zero-width match
+  }
+  if (last < data.length) frag.append(data.slice(last));
+  return frag;
 }

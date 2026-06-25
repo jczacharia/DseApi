@@ -1,4 +1,5 @@
 import {IdGenerator} from '#shared/id-generator';
+import {getOrInsertComputed} from '#shared/map-polyfills';
 import {perHost} from '#shared/per-host';
 import {isNil} from '#shared/validators';
 import {booleanAttribute, HostAttributeToken, inject, Injector, runInInjectionContext} from '@angular/core';
@@ -22,7 +23,7 @@ const HostAttr = perHost(() => {
   const cache = new Map<string, string | null>();
   const injector = inject(Injector);
   return (attr: string) =>
-    cache.getOrInsertComputed(attr, () =>
+    getOrInsertComputed(cache, attr, () =>
       runInInjectionContext(injector, () => inject(new HostAttributeToken(attr), {optional: true})),
     );
 });

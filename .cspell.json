@@ -1,0 +1,41 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "caseSensitive": false,
+  "allowCompoundWords": true,
+  "useGitignore": true,
+  "dictionaries": [
+    "bash",
+    "companies",
+    "csharp",
+    "css",
+    "filetypes",
+    "fonts",
+    "html",
+    "misc",
+    "node",
+    "npm",
+    "softwareTerms",
+    "typescript",
+    "project-words"
+  ],
+  "dictionaryDefinitions": [
+    {"name": "project-words", "path": "./project-words.txt", "addWords": true}
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    ".angular/**",
+    "**/bin/**",
+    "**/obj/**",
+    "coverage*/**",
+    "package-lock.json",
+    "**/*.json",
+    "**/*.{yml,yaml}",
+    "ui/app/api/**",
+    "eng/sonar/**",
+    "**/*.min.*",
+    "**/*.svg"
+  ],
+  "flagWords": []
+}

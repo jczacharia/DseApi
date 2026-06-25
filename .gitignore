@@ -526,3 +526,5 @@ Thumbs.db
 
 # Local CI emulation: downloaded/extracted Elasticsearch, data, logs (EphemeralElasticsearch)
 .local-es/
+
+.sonarqube
