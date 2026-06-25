@@ -6,6 +6,7 @@ using Dse;
 using Dse.Api;
 using Dse.Confluence;
 using Dse.Core;
+using Dse.Domain;
 using Dse.ES;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -41,6 +42,15 @@ builder.Services.AddOpenApi(opts =>
 {
     opts.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
     opts.AddComponentsFromAssemblies(dseAssemblies);
+    opts.AddSchemaTransformer(static (schema, ctx, _) =>
+    {
+        if (ctx.JsonTypeInfo.Type == typeof(MnemonicAbbr))
+        {
+            MnemonicAbbr.ConfigureOpenApiSchema(schema);
+        }
+
+        return Task.CompletedTask;
+    });
     opts.AddDocumentTransformer(static (doc, _, _) =>
     {
         doc.Info.Title = "DSE";

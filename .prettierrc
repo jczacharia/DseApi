@@ -29,6 +29,12 @@
       "options": {
         "parser": "html"
       }
+    },
+    {
+      "files": "*.esproj",
+      "options": {
+        "parser": "html"
+      }
     }
   ]
 }
