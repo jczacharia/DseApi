@@ -492,6 +492,9 @@ $RECYCLE.BIN/
 npm-debug.log
 yarn-error.log
 
+# This repo is pnpm-only (enforced via preinstall only-allow); never an npm lockfile
+package-lock.json
+
 # IDEs and editors
 .idea/
 .project

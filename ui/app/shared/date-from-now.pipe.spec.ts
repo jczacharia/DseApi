@@ -1,103 +1,93 @@
 import {DateFromNowPipe} from '#shared/date-from-now.pipe';
 import {render, screen} from '@testing-library/angular';
-import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
+import {describe, expect, it} from 'vitest';
+
+type Value = Parameters<DateFromNowPipe['transform']>[0];
 
 describe(DateFromNowPipe.name, () => {
-  const NOW = new Date('2026-04-30T12:00:00Z');
+  // Fixed reference so every case is deterministic — native Temporal.Now is not
+  // controlled by vitest's fake timers, so we inject `now` instead of mocking it.
+  const NOW = Temporal.Instant.from('2026-06-15T12:00:00Z');
+  const NOW_UTC = NOW.toZonedDateTimeISO('UTC');
 
-  beforeAll(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(NOW);
-  });
+  async function textFor(value: Value, now: Temporal.Instant | undefined = NOW): Promise<string> {
+    await render(`<span data-testid="out">{{ value | dateFromNow: now }}</span>`, {
+      imports: [DateFromNowPipe],
+      componentProperties: {value, now},
+    });
+    return screen.getByTestId('out').textContent ?? '';
+  }
 
-  afterAll(() => {
-    vi.useRealTimers();
-  });
-
-  describe('null / empty input', () => {
+  describe('empty input', () => {
     it('renders an empty string for null', async () => {
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: null},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('');
+      expect(await textFor(null)).toBe('');
     });
 
-    it('renders an empty string for an empty string input', async () => {
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: ''},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('');
+    it('renders an empty string for undefined', async () => {
+      expect(await textFor(undefined)).toBe('');
+    });
+
+    it('renders an empty string for an empty string', async () => {
+      expect(await textFor('')).toBe('');
     });
   });
 
-  describe('default options', () => {
-    it('formats a past Date without a suffix', async () => {
-      const fiveMinutesAgo = new Date(NOW.getTime() - 5 * 60 * 1000);
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: fiveMinutesAgo},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('5 minutes');
+  describe('Temporal.Instant input', () => {
+    it('suffixes a past instant with "ago"', async () => {
+      expect(await textFor(NOW.subtract({minutes: 5}))).toBe('5 minutes ago');
     });
 
-    it('formats a future Date without an "in" prefix', async () => {
-      const inTenMinutes = new Date(NOW.getTime() + 10 * 60 * 1000);
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: inTenMinutes},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('10 minutes');
+    it('prefixes a future instant with "in"', async () => {
+      expect(await textFor(NOW.add({minutes: 10}))).toBe('in 10 minutes');
     });
 
-    it('accepts an ISO string input', async () => {
-      const twoHoursAgo = new Date(NOW.getTime() - 2 * 60 * 60 * 1000).toISOString();
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: twoHoursAgo},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('2 hours');
+    it('picks the largest elapsed unit', async () => {
+      expect(await textFor(NOW.subtract({hours: 2}))).toBe('2 hours ago');
     });
 
-    it('renders "0 seconds" for the current instant', async () => {
-      await render(`<span data-testid="out">{{ value | dateFromNow }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: NOW},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('0 seconds');
+    it('renders "now" for the current instant', async () => {
+      expect(await textFor(NOW)).toBe('now');
     });
   });
 
-  describe('options argument', () => {
-    it('adds a suffix when addSuffix is true', async () => {
-      const oneHourAgo = new Date(NOW.getTime() - 60 * 60 * 1000);
-      await render(`<span data-testid="out">{{ value | dateFromNow: {addSuffix: true} }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: oneHourAgo},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('1 hour ago');
+  describe('string and Date inputs', () => {
+    it('accepts an ISO string', async () => {
+      expect(await textFor(NOW.subtract({hours: 2}).toString())).toBe('2 hours ago');
     });
 
-    it('honors the unit option', async () => {
-      const oneHourAgo = new Date(NOW.getTime() - 60 * 60 * 1000);
-      await render(`<span data-testid="out">{{ value | dateFromNow: {unit: 'minute'} }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: oneHourAgo},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('60 minutes');
+    it('accepts a legacy Date via toTemporalInstant()', async () => {
+      expect(await textFor(new Date(NOW.epochMilliseconds - 60 * 60 * 1000))).toBe('1 hour ago');
+    });
+  });
+
+  describe('rounding (half-expand, like formatDistanceToNowStrict)', () => {
+    it('rounds up at the half boundary', async () => {
+      // 110s = 1.83 min → 2
+      expect(await textFor(NOW.subtract({seconds: 110}))).toBe('2 minutes ago');
     });
 
-    it('honors the roundingMethod option', async () => {
-      const almostTwoMinutes = new Date(NOW.getTime() - 110 * 1000);
-      const {rerender} = await render(`<span data-testid="out">{{ value | dateFromNow:opts }}</span>`, {
-        imports: [DateFromNowPipe],
-        componentProperties: {value: almostTwoMinutes, opts: {roundingMethod: 'floor'}},
-      });
-      expect(screen.getByTestId('out')).toHaveTextContent('1 minute');
-
-      await rerender({componentProperties: {value: almostTwoMinutes, opts: {roundingMethod: 'ceil'}}});
-      expect(screen.getByTestId('out')).toHaveTextContent('2 minutes');
+    it('rounds down below the half boundary', async () => {
+      // 80s = 1.33 min → 1
+      expect(await textFor(NOW.subtract({seconds: 80}))).toBe('1 minute ago');
     });
+  });
+
+  describe('numeric: "auto" idioms', () => {
+    it('renders "yesterday" instead of "1 day ago"', async () => {
+      expect(await textFor(NOW_UTC.subtract({days: 1}).toInstant())).toBe('yesterday');
+    });
+
+    it('renders "last month" instead of "1 month ago"', async () => {
+      expect(await textFor(NOW_UTC.subtract({months: 1}).toInstant())).toBe('last month');
+    });
+
+    it('stays numeric beyond a single unit', async () => {
+      expect(await textFor(NOW_UTC.subtract({months: 2}).toInstant())).toBe('2 months ago');
+    });
+  });
+
+  it('defaults `now` to the system clock when omitted', async () => {
+    // No injected `now`: a long-past instant is unambiguously "years ago".
+    expect(await textFor(Temporal.Instant.from('2020-01-01T00:00:00Z'), undefined)).toMatch(/years ago$/);
   });
 });

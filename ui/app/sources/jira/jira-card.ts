@@ -2,8 +2,8 @@ import {type SearchCard} from '#core/source/source';
 import {SourceRegistry} from '#core/source/source-registry';
 import {DateFromNowPipe} from '#shared/date-from-now.pipe';
 import {Component, computed, inject, input} from '@angular/core';
-import {NgIcon} from '@ng-icons/core';
 import type {estypes} from '@elastic/elasticsearch';
+import {NgIcon} from '@ng-icons/core';
 import type {JiraDoc} from './jira-doc';
 
 @Component({
@@ -16,9 +16,11 @@ import type {JiraDoc} from './jira-doc';
       [style.--source-color]="source()?.options?.color"
     >
       <div class="flex items-center gap-2 text-xs">
-        <ng-icon [name]="source()?.options?.icon ?? ''" class="text-sm" style="color: var(--source-color)" />
+        <ng-icon class="text-sm" style="color: var(--source-color)" [name]="source()?.options?.icon ?? ''" />
         <span class="text-muted-foreground font-mono">{{ doc().key }}</span>
-        <span class="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-[10px] tracking-wide uppercase">
+        <span
+          class="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-[10px] tracking-wide uppercase"
+        >
           {{ doc().status }}
         </span>
         <span class="text-muted-foreground/60 font-mono">· {{ doc().updated | dateFromNow }} ago</span>
