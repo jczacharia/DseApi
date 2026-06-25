@@ -9,6 +9,6 @@ public sealed class ElasticHealthCheckTests(ITestOutputHelper outputHelper) : Ap
     public async Task ReadyEndpointWithLiveClusterReportsHealthy()
     {
         var response = await Client.GetAsync("/health/elastic/ready", TestContext.Current.CancellationToken);
-        Assert.True(response.IsSuccessStatusCode);
+        response.IsSuccessStatusCode.Should().BeTrue();
     }
 }

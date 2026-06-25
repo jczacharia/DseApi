@@ -18,7 +18,7 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
     {
         await using IDistributedSynchronizationHandle? handle =
             await Provider.TryAcquireLockAsync(UniqueName(), cancellationToken: TestContext.Current.CancellationToken);
-        Assert.NotNull(handle);
+        handle.Should().NotBeNull();
     }
 
     [Fact(Timeout = 5_000)]
@@ -31,7 +31,7 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
         IDistributedSynchronizationHandle? second =
             await Provider.TryAcquireLockAsync(name, cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.Null(second);
+        second.Should().BeNull();
     }
 
     [Fact(Timeout = 5_000)]
@@ -46,7 +46,7 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
         await using IDistributedSynchronizationHandle? again =
             await Provider.TryAcquireLockAsync(name, cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.NotNull(again);
+        again.Should().NotBeNull();
     }
 
     [Fact(Timeout = 5_000)]
@@ -57,8 +57,8 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
         await using IDistributedSynchronizationHandle? b =
             await Provider.TryAcquireLockAsync(UniqueName(), cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.NotNull(a);
-        Assert.NotNull(b);
+        a.Should().NotBeNull();
+        b.Should().NotBeNull();
     }
 
     [Fact(Timeout = 10_000)]
@@ -71,12 +71,12 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
         Task<IDistributedSynchronizationHandle> waiter = Provider.AcquireLockAsync(name, TimeSpan.FromSeconds(10),
                 TestContext.Current.CancellationToken)
             .AsTask();
-        Assert.False(waiter.IsCompleted); // blocked while the lease is live
+        waiter.IsCompleted.Should().BeFalse(); // blocked while the lease is live
 
         await holder.DisposeAsync();
 
         await using IDistributedSynchronizationHandle acquired = await waiter;
-        Assert.NotNull(acquired);
+        acquired.Should().NotBeNull();
     }
 
     [Fact(Timeout = 5_000)]
@@ -85,7 +85,7 @@ public sealed class EsDistributedLockTests(ITestOutputHelper outputHelper) : Api
         await using IDistributedSynchronizationHandle handle =
             await Provider.AcquireLockAsync(UniqueName(), cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.True(handle.HandleLostToken.CanBeCanceled);
-        Assert.False(handle.HandleLostToken.IsCancellationRequested);
+        handle.HandleLostToken.CanBeCanceled.Should().BeTrue();
+        handle.HandleLostToken.IsCancellationRequested.Should().BeFalse();
     }
 }

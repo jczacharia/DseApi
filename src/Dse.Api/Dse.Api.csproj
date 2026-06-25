@@ -31,7 +31,7 @@
     BeforeTargets="BeforeBuild;PublishAngular"
     Condition="!Exists('$(SpaRoot)node_modules')"
   >
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run ci" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="pnpm ci" />
   </Target>
 
   <Target Name="ClientApiGen" AfterTargets="Build">

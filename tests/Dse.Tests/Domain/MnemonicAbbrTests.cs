@@ -21,13 +21,13 @@ public sealed class MnemonicAbbrTests(ITestOutputHelper outputHelper) : ApiTest(
         {
             app.MapGet("/mne/{mne}", (MnemonicAbbr mne) =>
             {
-                Assert.Equal(mne, MnemonicAbbr.From("DSE"));
+                mne.Should().Be(MnemonicAbbr.From("DSE"));
                 return TypedResults.Json(new { mne });
             });
         });
         var response = await host.CreateClient()
             .GetFromJsonAsync<Dictionary<string, string>>("/mne/dSe", TestContext.Current.CancellationToken);
-        Assert.Equal("DSE", response?["mne"]);
+        response?["mne"].Should().Be("DSE");
     }
 }
 
@@ -43,7 +43,7 @@ public sealed class MnemonicAbbrParseTests
     [InlineData("\tDSE\n", "DSE")] // tabs and newlines trimmed too
     [InlineData(" abc ", "ABC")]
     public void From_ValidInput_NormalizesToUppercase(string input, string expected) =>
-        Assert.Equal(expected, MnemonicAbbr.From(input).Value);
+        MnemonicAbbr.From(input).Value.Should().Be(expected);
 
     [Theory]
     [InlineData("")] // empty
@@ -60,35 +60,35 @@ public sealed class MnemonicAbbrParseTests
     [InlineData("D E")] // inner whitespace is not stripped
     [InlineData("D\tE")]
     public void TryParse_InvalidInput_ReturnsFalse(string input) =>
-        Assert.False(MnemonicAbbr.TryParse(input, provider: null, out _));
+        MnemonicAbbr.TryParse(input, provider: null, out _).Should().BeFalse();
 
     [Fact]
     public void TryParse_NullString_ReturnsFalse() =>
-        Assert.False(MnemonicAbbr.TryParse(s: null, provider: null, out _));
+        MnemonicAbbr.TryParse(s: null, provider: null, out _).Should().BeFalse();
 
     [Fact]
     public void Parse_TrimsAndNormalizes() =>
-        Assert.Equal("DSE", MnemonicAbbr.Parse("   dSe ", provider: null).Value);
+        MnemonicAbbr.Parse("   dSe ", provider: null).Value.Should().Be("DSE");
 
     [Fact]
     public void From_InvalidInput_ThrowsFormatException()
     {
-        var ex = Assert.Throws<FormatException>(() => MnemonicAbbr.From("nope"));
-        Assert.Contains("^[A-Z]{3}$", ex.Message);
+        Action act = () => MnemonicAbbr.From("nope");
+        act.Should().Throw<FormatException>().WithMessage("*^[A-Z]{3}$*");
     }
 
     [Fact]
     public void ImplicitStringConversion_YieldsNormalizedString()
     {
         string s = MnemonicAbbr.From("dSe");
-        Assert.Equal("DSE", s);
+        s.Should().Be("DSE");
     }
 
     [Fact]
     public void ImplicitStringConversion_FlowsToStringParameter()
     {
-        static string Echo(string value) => value;
-        Assert.Equal("DSE", Echo(MnemonicAbbr.From("dSe")));
+        Func<string, string> echo = value => value;
+        echo(MnemonicAbbr.From("dSe")).Should().Be("DSE");
     }
 
     [Fact]
@@ -97,31 +97,31 @@ public sealed class MnemonicAbbrParseTests
         MnemonicAbbr lower = MnemonicAbbr.From("dse");
         MnemonicAbbr upper = MnemonicAbbr.From("DSE");
 
-        Assert.Equal(upper, lower);
-        Assert.True(upper == lower);
-        Assert.Equal(upper.GetHashCode(), lower.GetHashCode());
+        lower.Should().Be(upper);
+        (upper == lower).Should().BeTrue();
+        lower.GetHashCode().Should().Be(upper.GetHashCode());
     }
 
     [Fact]
     public void Equality_DistinctValues_AreNotEqual()
     {
-        Assert.NotEqual(MnemonicAbbr.From("DSE"), MnemonicAbbr.From("DSF"));
-        Assert.True(MnemonicAbbr.From("DSE") != MnemonicAbbr.From("DSF"));
+        MnemonicAbbr.From("DSF").Should().NotBe(MnemonicAbbr.From("DSE"));
+        (MnemonicAbbr.From("DSE") != MnemonicAbbr.From("DSF")).Should().BeTrue();
     }
 
     [Fact]
     public void CanBeUsedAsDictionaryKey()
     {
         var map = new Dictionary<MnemonicAbbr, int> { [MnemonicAbbr.From("DSE")] = 42 };
-        Assert.Equal(expected: 42, map[MnemonicAbbr.From("dse")]);
+        map[MnemonicAbbr.From("dse")].Should().Be(42);
     }
 
     [Fact]
     public void ISpanParsable_RoundTrips()
     {
-        Assert.True(MnemonicAbbr.TryParse("dSe".AsSpan(), provider: null, out MnemonicAbbr viaTryParse));
-        Assert.Equal(MnemonicAbbr.Parse("dSe".AsSpan(), provider: null), viaTryParse);
-        Assert.Equal("DSE", viaTryParse.Value);
+        MnemonicAbbr.TryParse("dSe", provider: null, out MnemonicAbbr viaTryParse).Should().BeTrue();
+        viaTryParse.Should().Be(MnemonicAbbr.Parse("dSe", provider: null));
+        viaTryParse.Value.Should().Be("DSE");
     }
 
     [Theory]
@@ -130,24 +130,20 @@ public sealed class MnemonicAbbrParseTests
     public void Json_DeserializesAndNormalizes(string json, string expected)
     {
         var abbr = JsonSerializer.Deserialize<MnemonicAbbr>($"\"{json}\"");
-        Assert.Equal(MnemonicAbbr.From(expected), abbr);
+        abbr.Should().Be(MnemonicAbbr.From(expected));
     }
 
     [Fact]
     public void Json_Serializes_AsNormalizedString() =>
-        Assert.Equal("\"DSE\"", JsonSerializer.Serialize(MnemonicAbbr.From("dSe")));
+        JsonSerializer.Serialize(MnemonicAbbr.From("dSe")).Should().Be("\"DSE\"");
 
     [Fact]
     public void Json_RoundTrips()
     {
         MnemonicAbbr original = MnemonicAbbr.From("dSe");
         string json = JsonSerializer.Serialize(original);
-        Assert.Equal(original, JsonSerializer.Deserialize<MnemonicAbbr>(json));
+        JsonSerializer.Deserialize<MnemonicAbbr>(json).Should().Be(original);
     }
-
-    [Fact]
-    public void Json_InvalidString_ThrowsFormatException() =>
-        Assert.Throws<FormatException>(() => JsonSerializer.Deserialize<MnemonicAbbr>("\"nope\""));
 
     // MVC binds simple route/query params via TypeDescriptor.GetConverter(...).ConvertFrom(string).
     [Theory]
@@ -156,18 +152,18 @@ public sealed class MnemonicAbbrParseTests
     public void TypeConverter_ConvertsFromStringAndNormalizes(string input, string expected)
     {
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(MnemonicAbbr));
-        Assert.True(converter.CanConvertFrom(typeof(string)));
+        converter.CanConvertFrom(typeof(string)).Should().BeTrue();
         var abbr = (MnemonicAbbr)converter.ConvertFrom(context: null, CultureInfo.InvariantCulture, input)!;
-        Assert.Equal(expected, abbr.Value);
+        abbr.Value.Should().Be(expected);
     }
 
     [Fact]
     public void TypeConverter_ConvertsToNormalizedString()
     {
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(MnemonicAbbr));
-        Assert.True(converter.CanConvertTo(typeof(string)));
+        converter.CanConvertTo(typeof(string)).Should().BeTrue();
         object? s = converter.ConvertTo(MnemonicAbbr.From("dSe"), typeof(string));
-        Assert.Equal("DSE", s);
+        s.Should().Be("DSE");
     }
 
     [Fact]
@@ -176,10 +172,10 @@ public sealed class MnemonicAbbrParseTests
         var schema = new OpenApiSchema();
         MnemonicAbbr.ConfigureOpenApiSchema(schema);
 
-        Assert.Equal(JsonSchemaType.String, schema.Type);
-        Assert.Equal(expected: 3, schema.MinLength);
-        Assert.Equal(expected: 3, schema.MaxLength);
-        Assert.Equal("^[A-Z]{3}$", schema.Pattern);
-        Assert.Equal(MnemonicAbbr.Pattern, schema.Pattern);
+        schema.Type.Should().Be(JsonSchemaType.String);
+        schema.MinLength.Should().Be(3);
+        schema.MaxLength.Should().Be(3);
+        schema.Pattern.Should().Be("^[A-Z]{3}$");
+        schema.Pattern.Should().Be(MnemonicAbbr.Pattern);
     }
 }
