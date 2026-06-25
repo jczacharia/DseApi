@@ -69,30 +69,30 @@ public static class HealthCheckEndpoints
             RouteGroupBuilder group = endpoints.MapGroup("health").WithTags("Health");
 
             group.MapHealthChecks("", new HealthCheckOptions
-                {
-                    ResponseWriter = WriteHealthReport,
-                })
+            {
+                ResponseWriter = WriteHealthReport,
+            })
                 .ApplyDefaults("Full health report", "Every registered check.");
 
             group.MapHealthChecks("startup", new HealthCheckOptions
-                {
-                    Predicate = static r => r.Tags.Contains("startup"),
-                    ResponseWriter = WriteHealthReport,
-                })
+            {
+                Predicate = static r => r.Tags.Contains("startup"),
+                ResponseWriter = WriteHealthReport,
+            })
                 .ApplyDefaults("Full health report", "Every registered check.");
 
             group.MapHealthChecks("live", new HealthCheckOptions
-                {
-                    Predicate = static r => r.Tags.Contains("live"),
-                    ResponseWriter = WriteHealthReport,
-                })
+            {
+                Predicate = static r => r.Tags.Contains("live"),
+                ResponseWriter = WriteHealthReport,
+            })
                 .ApplyDefaults("Liveness probe", "Process is up — no dependency checks run.");
 
             group.MapHealthChecks("ready", new HealthCheckOptions
-                {
-                    Predicate = static r => r.Tags.Contains("ready"),
-                    ResponseWriter = WriteHealthReport,
-                })
+            {
+                Predicate = static r => r.Tags.Contains("ready"),
+                ResponseWriter = WriteHealthReport,
+            })
                 .ApplyDefaults("Readiness probe", "Process and its ready-tagged dependencies are reachable.");
 
             foreach (string name in endpoints.ServiceProvider
@@ -100,10 +100,10 @@ public static class HealthCheckEndpoints
                          .Value.Registrations.Select(r => r.Name))
             {
                 group.MapHealthChecks($"{name}", new HealthCheckOptions
-                    {
-                        Predicate = r => r.Name == name,
-                        ResponseWriter = WriteHealthReport,
-                    })
+                {
+                    Predicate = r => r.Name == name,
+                    ResponseWriter = WriteHealthReport,
+                })
                     .ApplyDefaults($"Health: {name}", $"The '{name}' check in isolation.");
             }
         }
@@ -128,13 +128,13 @@ public static class HealthCheckEndpoints
                     Description =
                         "The service is serving traffic — overall status is Healthy or Degraded (see the body's status field).",
                     Content = new Dictionary<string, OpenApiMediaType>
-                        { ["application/json"] = new() { Schema = schemaRef } },
+                    { ["application/json"] = new() { Schema = schemaRef } },
                 };
                 operation.Responses["503"] = new OpenApiResponse
                 {
                     Description = "The service or an upstream dependency is unhealthy.",
                     Content = new Dictionary<string, OpenApiMediaType>
-                        { ["application/json"] = new() { Schema = schemaRef } },
+                    { ["application/json"] = new() { Schema = schemaRef } },
                 };
             });
     }

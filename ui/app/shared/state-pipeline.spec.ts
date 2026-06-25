@@ -1,4 +1,3 @@
-/* eslint-disable @angular-eslint/no-uncalled-signals */
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {statePipeline} from './state-pipeline';

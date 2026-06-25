@@ -4,8 +4,7 @@ import {formatDistanceToNowStrict, type FormatDistanceToNowStrictOptions} from '
 
 @Pipe({name: 'dateFromNow'})
 export class DateFromNowPipe implements PipeTransform {
-  transform(value: Date | string | null, opts?: FormatDistanceToNowStrictOptions): string {
-    if (!value) return '';
+  transform(value: Date, opts?: FormatDistanceToNowStrictOptions): string {
     return formatDistanceToNowStrict(value, opts);
   }
 }

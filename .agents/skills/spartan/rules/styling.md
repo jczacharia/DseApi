@@ -78,7 +78,7 @@ wraps `clsx` + `tailwind-merge`, so later classes win conflicts). Do not concate
 by hand.
 
 ```ts
-import { hlm } from '@spartan-ng/helm/utils';
+import {hlm} from '@spartan-ng/helm/utils';
 
 const cls = hlm('rounded-md border px-3 py-2', active() && 'bg-accent', userClass());
 ```
@@ -96,17 +96,17 @@ with the consumer's classes winning conflicts. No `class` input or binding neede
 the same on components and directives:
 
 ```ts
-import { Component } from '@angular/core';
-import { classes } from '@spartan-ng/helm/utils';
+import {Component} from '@angular/core';
+import {classes} from '@spartan-ng/helm/utils';
 
 @Component({
-	selector: 'app-badge',
-	template: '<ng-content />',
+  selector: 'app-badge',
+  template: '<ng-content />',
 })
 export class AppBadge {
-	constructor() {
-		classes(() => 'inline-flex items-center rounded-md border px-2 py-0.5');
-	}
+  constructor() {
+    classes(() => 'inline-flex items-center rounded-md border px-2 py-0.5');
+  }
 }
 ```
 
@@ -120,20 +120,20 @@ When you need to fold the user's class into a `computed` alongside conditional c
 `class`-aliased input and bind the merged result yourself. Put the user's class last so it wins:
 
 ```ts
-import { Component, computed, input } from '@angular/core';
-import { hlm } from '@spartan-ng/helm/utils';
-import type { ClassValue } from 'clsx';
+import {Component, computed, input} from '@angular/core';
+import {hlm} from '@spartan-ng/helm/utils';
+import type {ClassValue} from 'clsx';
 
 @Component({
-	selector: 'app-badge',
-	template: '<ng-content />',
-	host: { '[class]': '_computedClass()' },
+  selector: 'app-badge',
+  template: '<ng-content />',
+  host: {'[class]': '_computedClass()'},
 })
 export class AppBadge {
-	public readonly userClass = input<ClassValue>('', { alias: 'class' });
-	protected readonly _computedClass = computed(() =>
-		hlm('inline-flex items-center rounded-md border px-2 py-0.5', this.userClass()),
-	);
+  public readonly userClass = input<ClassValue>('', {alias: 'class'});
+  protected readonly _computedClass = computed(() =>
+    hlm('inline-flex items-center rounded-md border px-2 py-0.5', this.userClass()),
+  );
 }
 ```
 

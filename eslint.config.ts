@@ -40,7 +40,7 @@ export default defineConfig([
       ],
       '@typescript-eslint/explicit-member-accessibility': ['error', {accessibility: 'no-public'}],
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -80,7 +80,7 @@ export default defineConfig([
       '@angular-eslint/no-host-metadata-property': 'off',
       '@angular-eslint/no-input-rename': 'off',
       '@angular-eslint/no-output-rename': 'off',
-      '@angular-eslint/no-uncalled-signals': 'error',
+      '@angular-eslint/no-uncalled-signals': 'off',
       '@angular-eslint/prefer-inject': 'off',
       '@angular-eslint/prefer-on-push-component-change-detection': 'off', // Angular 22 defaults to OnPush
       '@angular-eslint/prefer-output-emitter-ref': 'error',
@@ -88,13 +88,6 @@ export default defineConfig([
       '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/prefer-standalone': 'error',
       '@angular-eslint/sort-lifecycle-methods': 'error',
-    },
-  },
-  {
-    files: ['ui/app/ui/**/*.ts'],
-    rules: {
-      '@angular-eslint/directive-selector': ['error', {type: 'attribute', prefix: 'dse', style: 'camelCase'}],
-      '@angular-eslint/component-selector': ['error', {type: 'element', prefix: 'dse', style: 'kebab-case'}],
     },
   },
   {

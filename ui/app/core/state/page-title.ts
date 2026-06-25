@@ -15,5 +15,3 @@ export function createPageTitle(...values: (string | undefined | null)[]) {
 export function pageTitle(...values: (string | undefined | null)[]) {
   return linkedSignal(title(), {set: (value, set) => set(createPageTitle(value, ...values))});
 }
-
-pageTitle.from = (...values: (string | undefined | null)[]) => pageTitle(...values)();

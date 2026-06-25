@@ -17,17 +17,15 @@ Icon names are not global - each icon you reference must be provided to the comp
 `provideIcons`. Import the symbol from its set and register it:
 
 ```ts
-import { Component } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronRight, lucideTrash } from '@ng-icons/lucide';
+import {Component} from '@angular/core';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideChevronRight, lucideTrash} from '@ng-icons/lucide';
 
 @Component({
-	selector: 'app-example',
-	imports: [NgIcon],
-	providers: [provideIcons({ lucideChevronRight })],
-	template: `
-		<ng-icon name="lucideChevronRight" />
-	`,
+  selector: 'app-example',
+  imports: [NgIcon],
+  providers: [provideIcons({lucideChevronRight})],
+  template: ` <ng-icon name="lucideChevronRight" /> `,
 })
 export class ExampleComponent {}
 ```

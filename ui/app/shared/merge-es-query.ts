@@ -121,7 +121,13 @@ function sameSingleKey(left: Plain, right: Plain): boolean {
 }
 
 /** Concatenate clause arrays, normalizing the `Container | Container[]` overload and deduping field-path keys. */
-function concatClauses(left: unknown, right: unknown, key: string, leftIsArray: boolean, rightIsArray: boolean): unknown {
+function concatClauses(
+  left: unknown,
+  right: unknown,
+  key: string,
+  leftIsArray: boolean,
+  rightIsArray: boolean,
+): unknown {
   let leftArr: unknown[];
   if (leftIsArray) leftArr = left as unknown[];
   else if (left === undefined) leftArr = [];

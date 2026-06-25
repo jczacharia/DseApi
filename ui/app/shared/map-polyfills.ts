@@ -6,7 +6,6 @@ export function getOrInsertComputed<K extends WeakKey, V>(
   callback: (key: K) => V,
 ): V {
   if (map.has(key)) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return map.get(key)!;
   }
   const value = callback(key);
