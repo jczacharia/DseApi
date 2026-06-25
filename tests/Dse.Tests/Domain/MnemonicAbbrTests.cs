@@ -36,6 +36,9 @@ public sealed class MnemonicAbbrParseTests
     [InlineData("dSe", "DSE")] // mixed
     [InlineData("AbC", "ABC")]
     [InlineData("xyz", "XYZ")] // end of the alphabet folds correctly
+    [InlineData("   dSe ", "DSE")] // surrounding whitespace trimmed
+    [InlineData("\tDSE\n", "DSE")] // tabs and newlines trimmed too
+    [InlineData(" abc ", "ABC")]
     public void TryParse_ValidInput_NormalizesToUppercase(string input, string expected)
     {
         Assert.True(MnemonicAbbr.TryParse(input.AsSpan(), out MnemonicAbbr abbr));
@@ -73,10 +76,34 @@ public sealed class MnemonicAbbrParseTests
         Assert.Equal("DSE", MnemonicAbbr.Parse("dSe").ToString());
 
     [Fact]
+    public void Parse_TrimsSurroundingWhitespace() =>
+        Assert.Equal("DSE", MnemonicAbbr.Parse("   dSe ").ToString());
+
+    [Theory]
+    [InlineData("D E")] // inner whitespace is not stripped
+    [InlineData("D\tE")]
+    public void TryParse_InnerWhitespace_ReturnsFalse(string input) =>
+        Assert.False(MnemonicAbbr.TryParse(input.AsSpan(), out _));
+
+    [Fact]
     public void Parse_InvalidInput_ThrowsFormatException()
     {
         var ex = Assert.Throws<FormatException>(() => MnemonicAbbr.Parse("nope"));
         Assert.Contains("^[A-Z]{3}$", ex.Message);
+    }
+
+    [Fact]
+    public void ImplicitStringConversion_YieldsNormalizedString()
+    {
+        string s = MnemonicAbbr.Parse("dSe");
+        Assert.Equal("DSE", s);
+    }
+
+    [Fact]
+    public void ImplicitStringConversion_FlowsToStringParameter()
+    {
+        static string Echo(string value) => value;
+        Assert.Equal("DSE", Echo(MnemonicAbbr.Parse("dSe")));
     }
 
     [Fact]

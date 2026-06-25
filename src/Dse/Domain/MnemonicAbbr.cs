@@ -39,9 +39,10 @@ public readonly record struct MnemonicAbbr : ISpanParsable<MnemonicAbbr>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out MnemonicAbbr result) =>
         TryParse(s, out result);
 
-    /// <summary>Attempts to parse and normalize a mnemonic. Returns <see langword="false" /> if invalid.</summary>
+    /// <summary>Attempts to parse and normalize a mnemonic, ignoring surrounding whitespace. Returns <see langword="false" /> if invalid.</summary>
     public static bool TryParse(ReadOnlySpan<char> input, out MnemonicAbbr abbr)
     {
+        input = input.Trim();
         if (input.Length == 3 &&
             TryNormalize(input[0], out char a) &&
             TryNormalize(input[1], out char b) &&
@@ -61,6 +62,9 @@ public readonly record struct MnemonicAbbr : ISpanParsable<MnemonicAbbr>
         upper = (char)(raw & ~0x20); // fold to uppercase
         return (uint)(upper - 'A') <= 'Z' - 'A'; // was it actually a letter?
     }
+
+    /// <summary>Implicitly converts to its normalized three-letter uppercase string.</summary>
+    public static implicit operator string(MnemonicAbbr abbr) => abbr.ToString();
 
     /// <summary>Returns the normalized three-letter uppercase representation.</summary>
     public override string ToString() => string.Create(length: 3, this, static (span, m) =>
